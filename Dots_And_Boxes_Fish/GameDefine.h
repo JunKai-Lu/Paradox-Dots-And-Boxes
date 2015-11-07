@@ -1,8 +1,12 @@
+#pragma once
+
 #include "stdafx.h"
 #include "windows.h"
 #include <iostream>
 
-#pragma  once
+
+
+
 //BASIC DEFINITION
 
 /*
@@ -17,6 +21,19 @@ MOVENUM is the total number of moves.
 #define BOXNUM BOXLEN*BOXLEN
 #define MOVENUM BOXLEN*(BOXLEN+1)*2
 
+/*
+here we define some constant express the different piece in the array
+*/
+#define EMPTY 0
+#define RED 1
+#define BLUE -1
+#define DOT 0
+#define EDGE 10
+#define BOX 20
+#define RED_EDGE 1
+#define BLUE_EDGE -1
+#define RED_BOX 2
+#define BLUE_BOX -2
 
 /* 
 'short' is redefined as 'sint' for easier substitution. 
@@ -86,7 +103,7 @@ public:
 	BOARD();
 	BOARD(Board &CB);
 	BOARD(Board &CB, MOVE &Move);
-
+	void SetBoard(Board &Source);
 };
 
 
@@ -96,70 +113,13 @@ public:
 'Cprintf' can print colorful string.
 'CprintfNum' can print colorful integer need not convert int to string. 
 */
-void Cprintf(char* str, WORD color, ...) {
-	WORD colorOld;
-	HANDLE handle = ::GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	GetConsoleScreenBufferInfo(handle, &csbi);
-	colorOld = csbi.wAttributes;
-	SetConsoleTextAttribute(handle, color);
-	std::cout << str;
-	SetConsoleTextAttribute(handle, colorOld);
-	/*
-	cprintf("H", 10);	//Green
-	cprintf("e", 9);	//Blue
-	cprintf("l", 12);	//Red
-	cprintf("l", 11);	//Cyan
-	cprintf("o", 13);	//Pink
-	cprintf("W", 15);	//White
-	cprintf("o", 2);	//Deep Green
-	cprintf("r", 5);	//Violet
-	cprintf("l", 8);	//Grey
-	cprintf("d", 14);	//Yellow
-	cprintf("!", 4);	//Brown
-	*/
-}
-void CprintfNum(int Num,int color)
-{
-	char str[4];
-	sprintf_s(str, "%d", Num);
-	Cprintf(str, color);
-}
+void Cprintf(char* str, WORD color, ...);
+void CprintfNum(int Num, int color);
 
-bool EqualLoc(LOC &a, LOC &b)
-{
-	return ((a.x == b.x) && (a.y == b.y));
-}
-LOC NewLoc(sint &x, sint &y)
-{
-	LOC l(x,y);
-	return l;
-}
-MOVE NewMove(sint &x, sint &y, sint &p)
-{
-	MOVE m(x, y, p);
-	return m;
-}
-bool EqualBoard(Board &a, Board &b)
-{
-	for (int y = 0; y < LEN; y++)
-		for (int x = 0; x < LEN; x++)
-			if (a[x][y] != b[x][y])
-				return false;
-	return true;
-}
-bool OddNum(int &num)
-{
-	//return 'true' if the num is an odd number.
-	if (num % 2 != 0)
-		return true;
-	return false;
-}
-bool EvenNum(int &num)
-{
-	//return 'true' if the num is an even number or zero.
-	//notice: we define zero as an even number.
-	if (num % 2 == 0 || num == 0)
-		return true;
-	return false;
-}
+bool EqualLoc(LOC &a, LOC &b);
+LOC NewLoc(sint &x, sint &y);
+MOVE NewMove(sint &x, sint &y, sint &p);
+bool EqualBoard(Board &a, Board &b);
+bool OddNum(int &num);
+bool EvenNum(int &num);
+
