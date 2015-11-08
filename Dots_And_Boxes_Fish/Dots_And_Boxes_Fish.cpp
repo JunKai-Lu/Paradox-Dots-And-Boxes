@@ -21,7 +21,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	clock_t start, finish;			//Timer Setup
 	double totaltime;				//Timer Setup
 	srand((unsigned)time(NULL));	//Srand 
-
 	
 
 	system("pause");

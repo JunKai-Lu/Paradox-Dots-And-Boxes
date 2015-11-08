@@ -51,6 +51,7 @@ class LOC mean LOCATION. which consist of x and y.
 */
 class LOC
 {
+friend bool EqualLoc(LOC &a, LOC &b);
 protected:
 	sint x = 0;
 	sint y = 0;
@@ -65,7 +66,7 @@ public:
 		x = lx;
 		y = ly;
 	}
-	friend bool EqualLoc(LOC &a, LOC &b);
+	
 };
 
 /*
@@ -73,6 +74,7 @@ class MOVE is and standard move which include the location and player, and a POI
 */
 class MOVE :public LOC
 {
+	friend class BOARD;
 protected:
 	sint player = 0;
 public:
@@ -86,6 +88,11 @@ public:
 		y = ly;
 		player = lp;
 	}
+	void Show()
+	{
+		std::cout << "X=" << (int)x << " Y=" << (int)y << " Player=" << (int)player << std::endl;
+	}
+	
 };
 
 
@@ -95,6 +102,8 @@ it is a base class.
 */
 class BOARD
 {
+
+
 public:
 	//data
 	Board board;//this array express an standard chess board.
@@ -103,7 +112,19 @@ public:
 	BOARD();
 	BOARD(Board &CB);
 	BOARD(Board &CB, MOVE &Move);
+	void Move(MOVE &Move, bool &ShowMsg);
+	inline void MoveMsg(MOVE &m);
 	void SetBoard(Board &Source);
+
+private:
+	inline bool GetBoxCompleted(sint &x, sint &y)
+	{
+		if (board[x + 1][y] == EDGE){ return false; }
+		if (board[x - 1][y] == EDGE){ return false; }
+		if (board[x][y + 1] == EDGE){ return false; }
+		if (board[x][y - 1] == EDGE){ return false; }
+		return true;
+	}
 };
 
 
@@ -120,6 +141,6 @@ bool EqualLoc(LOC &a, LOC &b);
 LOC NewLoc(sint &x, sint &y);
 MOVE NewMove(sint &x, sint &y, sint &p);
 bool EqualBoard(Board &a, Board &b);
-bool OddNum(int &num);
-bool EvenNum(int &num);
+bool OddNum(sint &num);
+bool EvenNum(sint &num);
 
