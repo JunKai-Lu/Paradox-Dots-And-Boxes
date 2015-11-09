@@ -29,8 +29,20 @@ BOARD::BOARD(Board &CB, MOVE &Move)
 {
 	SetBoard(CB);
 }
-void BOARD::Move(MOVE &Move, bool &ShowMsg)
+void BOARD::Move(MOVE &Move, bool ShowMsg)
 {
+	/*
+	CAUTION: if edge (x,y) and the boxes near by it have been captured, the function will change the boxes' belonger.  
+	*/
+	if (DEBUG)
+	{
+		if (board[Move.x][Move.y] != EDGE)
+		{
+			cout << "WARNING [Wrong Edge Location]" << endl;
+			system("pause");
+		}
+	}
+
 	//if 'ShowMsg' is true then sent message.
 	if (ShowMsg)
 		MoveMsg(Move);
@@ -42,11 +54,21 @@ void BOARD::Move(MOVE &Move, bool &ShowMsg)
 
 	if (OddNum(Move.x)&&EvenNum(Move.y))//horizonal
 	{
-		
+		if (Move.x + 1 < LEN - 1)
+			if (GetBoxCompleted(Move.x + 1, Move.y))
+				board[Move.x + 1][Move.y] = Move.player;
+		if (Move.x - 1 > 0)
+			if (GetBoxCompleted(Move.x - 1, Move.y))
+				board[Move.x - 1][Move.y] = Move.player;
 	}
 	else if (OddNum(Move.y) && EvenNum(Move.x))//vertical
 	{
-
+		if (Move.y + 1 < LEN - 1)
+			if (GetBoxCompleted(Move.x, Move.y + 1))
+				board[Move.x][Move.y + 1] = Move.player;
+		if (Move.y - 1 > 0)
+			if (GetBoxCompleted(Move.x, Move.y - 1))
+				board[Move.x][Move.y - 1] = Move.player;
 	}
 	else
 	{
@@ -61,6 +83,20 @@ void BOARD::SetBoard(Board &Source)
 	for (int i = 0; i < LEN; i++)
 		for (int j = 0; j < LEN; j++)
 			board[i][j] = Source[i][j];
+}
+
+sint BOARD::Winner()
+{
+	int RedBoxes = GetPlayerBoxes(RED);
+	int BlueBoxes = GetPlayerBoxes(BLUE);
+	if ((RedBoxes + BlueBoxes) >= BOXNUM)
+	{
+		if (RedBoxes>BlueBoxes)
+			return RED;
+		else
+			return BLUE;
+	}
+	return 0;
 }
 inline void BOARD::MoveMsg(MOVE &m)
 {
@@ -78,7 +114,82 @@ inline void BOARD::MoveMsg(MOVE &m)
 	Cprintf(")\n", 10);
 	cout << "===== Move Message =====" << endl;
 }
-
+void BOARD::PrintBoard()
+{
+	//Print Chess Board
+	cout << "  ";
+	for (int i = 0; i <= (LEN - 1); i++)
+	{
+		printf("%2d", i);
+	}
+	cout << "\n";
+	for (sint j = 0; j<LEN; j++)
+	{
+		printf("%2d", j);
+		for (sint i = 0; i<LEN; i++)
+		{
+			if (board[i][j] == BOX)
+			{
+				Cprintf("  ", 8);
+			}
+			else if (board[i][j] == RED_BOX)
+			{
+				Cprintf("¡ö", 12);
+			}
+			else if (board[i][j] == BLUE_BOX)
+			{
+				Cprintf("¡ö", 9);
+			}
+			else if (board[i][j] == EDGE)
+			{
+				if (OddNum(j) && EvenNum(i))
+				{
+					cout << "  ";
+					//cprintf("©§",15);
+				}
+				else
+				{
+					cout << "  ";
+					//cprintf("©¥",15);
+				}
+			}
+			else if (board[i][j] == RED_EDGE)
+			{
+				if (OddNum(j) && EvenNum(i))
+				{
+					Cprintf("©§", 12);
+				}
+				else
+				{
+					Cprintf("©¥", 12);
+				}
+			}
+			else if (board[i][j] == BLUE_EDGE)
+			{
+				if (OddNum(j) && EvenNum(i))
+				{
+					Cprintf("©§", 9);
+				}
+				else
+				{
+					Cprintf("©¥", 9);
+				}
+			}
+			else if (board[i][j] == EMPTY)
+			{
+				Cprintf("¡ð", 15);
+			}
+		}
+		printf("%2d", j);
+		cout << "\n";
+	}
+	cout << "  ";
+	for (int i = 0; i <= (LEN - 1); i++)
+	{
+		printf("%2d", i);
+	}
+	cout << "\n";
+}
 //some function
 
 void Cprintf(char* str, WORD color, ...) 
@@ -126,6 +237,14 @@ MOVE NewMove(sint &x, sint &y, sint &p)
 	MOVE m(x, y, p);
 	return m;
 }
+MOVE NewMove(int &x, int &y, int &p)
+{
+	sint sx = x;
+	sint sy = y;
+	sint sp = p;
+	MOVE m(sx, sy, sp);
+	return m;
+}
 bool EqualBoard(Board &a, Board &b)
 {
 	for (int y = 0; y < LEN; y++)
@@ -141,7 +260,22 @@ bool OddNum(sint &num)
 		return true;
 	return false;
 }
+bool OddNum(int &num)
+{
+	//return 'true' if the num is an odd number.
+	if (num % 2 != 0)
+		return true;
+	return false;
+}
 bool EvenNum(sint &num)
+{
+	//return 'true' if the num is an even number or zero.
+	//notice: we define zero as an even number.
+	if (num % 2 == 0 || num == 0)
+		return true;
+	return false;
+}
+bool EvenNum(int &num)
 {
 	//return 'true' if the num is an even number or zero.
 	//notice: we define zero as an even number.

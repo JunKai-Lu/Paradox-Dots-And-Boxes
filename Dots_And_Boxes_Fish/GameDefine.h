@@ -17,9 +17,9 @@ MOVENUM is the total number of moves.
 */
 
 #define LEN 11
-#define BOXLEN ((LEN-1)/2)
-#define BOXNUM BOXLEN*BOXLEN
-#define MOVENUM BOXLEN*(BOXLEN+1)*2
+#define BOXLEN 5
+#define BOXNUM 25
+#define MOVENUM 60
 
 /*
 here we define some constant express the different piece in the array
@@ -36,12 +36,14 @@ here we define some constant express the different piece in the array
 #define BLUE_BOX -2
 
 /* 
-'short' is redefined as 'sint' for easier substitution. 
-'short' instead of 'int' in order to save memory.
+'char' is redefined as 'sint' for easier substitution. 
+'char' instead of 'int' in order to save memory.
 */
 typedef char sint;
 using Board = sint[LEN][LEN];
 
+//debug model
+#define DEBUG true
 
 
 //CLASS DEFINITION
@@ -112,18 +114,46 @@ public:
 	BOARD();
 	BOARD(Board &CB);
 	BOARD(Board &CB, MOVE &Move);
-	void Move(MOVE &Move, bool &ShowMsg);
-	inline void MoveMsg(MOVE &m);
+	void Move(MOVE &Move, bool ShowMsg);
+	
 	void SetBoard(Board &Source);
+	inline void MoveMsg(MOVE &m);
+	sint Winner();
+	void PrintBoard();
 
-private:
-	inline bool GetBoxCompleted(sint &x, sint &y)
+protected:
+	inline int BOARD::GetPlayerBoxes(sint Player)
+	{
+		int b = 0;
+		sint box = Player * 2;
+		for (int i = 0; i < LEN; i++)
+			for (int j = 0; j < LEN; j++)
+				if (board[i][j] == box)
+					b++;
+		return b;
+	}
+	inline int GetBoxLiberties(sint x, sint y)
+	{
+		int edge = 0;
+		if (board[x + 1][y] == EDGE){ edge++; }
+		if (board[x - 1][y] == EDGE){ edge++; }
+		if (board[x][y + 1] == EDGE){ edge++; }
+		if (board[x][y - 1] == EDGE){ edge++; }
+		return edge;
+	}
+	inline bool GetBoxCompleted(sint x, sint y)
 	{
 		if (board[x + 1][y] == EDGE){ return false; }
 		if (board[x - 1][y] == EDGE){ return false; }
 		if (board[x][y + 1] == EDGE){ return false; }
 		if (board[x][y - 1] == EDGE){ return false; }
 		return true;
+	}
+	inline sint GetBoxOwner(sint x, sint y)
+	{
+		if (board[x][y] == RED_BOX){ return RED; }
+		if (board[x][y] == BLUE_BOX){ return BLUE; }
+		return 0;
 	}
 };
 
@@ -140,7 +170,10 @@ void CprintfNum(int Num, int color);
 bool EqualLoc(LOC &a, LOC &b);
 LOC NewLoc(sint &x, sint &y);
 MOVE NewMove(sint &x, sint &y, sint &p);
+MOVE NewMove(int &x, int &y, int &p);
 bool EqualBoard(Board &a, Board &b);
 bool OddNum(sint &num);
+bool OddNum(int &num);
 bool EvenNum(sint &num);
+bool EvenNum(int &num);
 
