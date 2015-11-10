@@ -54,21 +54,21 @@ void BOARD::Move(MOVE &Move, bool ShowMsg)
 
 	if (OddNum(Move.x)&&EvenNum(Move.y))//horizonal
 	{
-		if (Move.x + 1 < LEN - 1)
-			if (GetBoxCompleted(Move.x + 1, Move.y))
-				board[Move.x + 1][Move.y] = Move.player;
-		if (Move.x - 1 > 0)
-			if (GetBoxCompleted(Move.x - 1, Move.y))
-				board[Move.x - 1][Move.y] = Move.player;
+		if (Move.y + 1 < LEN - 1)
+			if (GetBoxCompleted(Move.x, Move.y + 1))
+				board[Move.x][Move.y + 1] = Move.player*2;
+		if (Move.y - 1 > 0)
+			if (GetBoxCompleted(Move.x, Move.y - 1))
+				board[Move.x][Move.y - 1] = Move.player*2;	
 	}
 	else if (OddNum(Move.y) && EvenNum(Move.x))//vertical
 	{
-		if (Move.y + 1 < LEN - 1)
-			if (GetBoxCompleted(Move.x, Move.y + 1))
-				board[Move.x][Move.y + 1] = Move.player;
-		if (Move.y - 1 > 0)
-			if (GetBoxCompleted(Move.x, Move.y - 1))
-				board[Move.x][Move.y - 1] = Move.player;
+		if (Move.x + 1 < LEN - 1)
+			if (GetBoxCompleted(Move.x + 1, Move.y))
+				board[Move.x + 1][Move.y] = Move.player*2;
+		if (Move.x - 1 > 0)
+			if (GetBoxCompleted(Move.x - 1, Move.y))
+				board[Move.x - 1][Move.y] = Move.player*2;
 	}
 	else
 	{
@@ -77,6 +77,22 @@ void BOARD::Move(MOVE &Move, bool ShowMsg)
 	}
 	
 
+}
+void BOARD::MoveMsg(MOVE &m)
+{
+	std::cout << "===== Move Message =====" << std::endl;
+	std::cout << "Msg: ";
+	if (m.player == RED)
+		Cprintf("Red", 12);
+	else
+		Cprintf("Blue ", 9);
+	std::cout << " Captual Edge";
+	Cprintf("(", 10);
+	CprintfNum(m.x, 10);
+	Cprintf(",", 10);
+	CprintfNum(m.y, 10);
+	Cprintf(")\n", 10);
+	std::cout << "===== Move Message =====" << std::endl;
 }
 void BOARD::SetBoard(Board &Source)
 {
@@ -98,22 +114,7 @@ sint BOARD::Winner()
 	}
 	return 0;
 }
-inline void BOARD::MoveMsg(MOVE &m)
-{
-	cout << "===== Move Message =====" << endl;
-	cout << "Msg: ";
-	if (m.player == RED)
-		Cprintf("Red", 12);
-	else
-		Cprintf("Blue ", 9);
-	cout << " Captual Edge";
-	Cprintf("(", 10);
-	CprintfNum(m.x,10);
-	Cprintf(",", 10);
-	CprintfNum(m.y, 10);
-	Cprintf(")\n", 10);
-	cout << "===== Move Message =====" << endl;
-}
+
 void BOARD::PrintBoard()
 {
 	//Print Chess Board
@@ -227,9 +228,24 @@ bool EqualLoc(LOC &a, LOC &b)
 {
 	return ((a.x == b.x) && (a.y == b.y));
 }
+bool EqualBoard(Board &a, Board &b)
+{
+	for (int y = 0; y < LEN; y++)
+		for (int x = 0; x < LEN; x++)
+			if (a[x][y] != b[x][y])
+				return false;
+	return true;
+}
 LOC NewLoc(sint &x, sint &y)
 {
 	LOC l(x, y);
+	return l;
+}
+LOC NewLoc(int &x, int &y)
+{
+	sint lx = (sint)x;
+	sint ly = (sint)y;
+	LOC l(lx, ly);
 	return l;
 }
 MOVE NewMove(sint &x, sint &y, sint &p)
@@ -244,14 +260,6 @@ MOVE NewMove(int &x, int &y, int &p)
 	sint sp = p;
 	MOVE m(sx, sy, sp);
 	return m;
-}
-bool EqualBoard(Board &a, Board &b)
-{
-	for (int y = 0; y < LEN; y++)
-		for (int x = 0; x < LEN; x++)
-			if (a[x][y] != b[x][y])
-				return false;
-	return true;
 }
 bool OddNum(sint &num)
 {

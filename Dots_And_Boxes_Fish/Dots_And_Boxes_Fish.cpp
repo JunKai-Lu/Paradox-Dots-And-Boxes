@@ -198,11 +198,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	Info();							//Show Game Infomation
 	BOARD CB;						//Create a new chess board;
 
+	//Test
+	start = clock();
+	finish = clock();
+	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
+	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
+
 	//Choose Model
 	int model;
 	cin >> model;
 	if (model == 0)
-		Cprintf("Open Default Model", 8);
+		Cprintf("Open Default Model\n\n", 8);
 	else if (model == 1)
 		Model_AI_Game();
 	else if (model == 2)
@@ -251,11 +257,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			system("cls");
 			CB.PrintBoard();
-			cout << "\nInput LOCATION and PLAYER£¬such as \"2,1,1\"" << endl;
 			for (;;)
 			{
+				cout << "\nInput LOCATION and PLAYER£¬such as \"2 1 1\"" << endl;
 				int locx, locy, owner;
-				scanf_s("%d,%d,%d", &locx, &locy, &owner);
+				scanf_s("%d %d %d", &locx, &locy, &owner);
 				if ((owner == 1 || owner == 2) && locx >= 0 && locx <= (LEN - 1) && locy >= 0 && locy <= (LEN - 1))//limit the range of input
 				{
 					if (owner == 2)
@@ -264,6 +270,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					{
 						MOVE m = NewMove(locx, locy, owner);
 						CB.Move(m, true);
+						break;
 					}
 					else
 					{
@@ -297,4 +304,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	return 0;
 }
-

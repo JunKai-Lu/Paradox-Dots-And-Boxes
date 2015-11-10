@@ -115,11 +115,11 @@ public:
 	BOARD(Board &CB);
 	BOARD(Board &CB, MOVE &Move);
 	void Move(MOVE &Move, bool ShowMsg);
-	
+	void BOARD::MoveMsg(MOVE &m);
 	void SetBoard(Board &Source);
-	inline void MoveMsg(MOVE &m);
 	sint Winner();
 	void PrintBoard();
+	
 
 protected:
 	inline int BOARD::GetPlayerBoxes(sint Player)
@@ -155,6 +155,10 @@ protected:
 		if (board[x][y] == BLUE_BOX){ return BLUE; }
 		return 0;
 	}
+
+private:
+	//STATE ALALYSIS
+	sint GetStateWinner(sint NextPlayer);
 };
 
 
@@ -168,10 +172,12 @@ void Cprintf(char* str, WORD color, ...);
 void CprintfNum(int Num, int color);
 
 bool EqualLoc(LOC &a, LOC &b);
+bool EqualBoard(Board &a, Board &b);
+
 LOC NewLoc(sint &x, sint &y);
+LOC NewLoc(int &x, int &y);
 MOVE NewMove(sint &x, sint &y, sint &p);
 MOVE NewMove(int &x, int &y, int &p);
-bool EqualBoard(Board &a, Board &b);
 bool OddNum(sint &num);
 bool OddNum(int &num);
 bool EvenNum(sint &num);

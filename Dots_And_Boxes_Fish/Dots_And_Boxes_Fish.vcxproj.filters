@@ -30,6 +30,9 @@
     <ClInclude Include="GameDefine.h">
       <Filter>Head File</Filter>
     </ClInclude>
+    <ClInclude Include="StateAnalysis.h">
+      <Filter>Head File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +42,9 @@
       <Filter>Main File</Filter>
     </ClCompile>
     <ClCompile Include="GameDefine.cpp">
+      <Filter>Main File</Filter>
+    </ClCompile>
+    <ClCompile Include="StateAnalysis.cpp">
       <Filter>Main File</Filter>
     </ClCompile>
   </ItemGroup>
