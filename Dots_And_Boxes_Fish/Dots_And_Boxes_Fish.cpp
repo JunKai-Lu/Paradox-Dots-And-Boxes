@@ -20,8 +20,8 @@ void Model_AI_Game()
 	int model;
 	char red_name[20];
 	char blue_name[20];
-	void(*func_red)(BOARD&, int, bool);
-	void(*func_blue)(BOARD&, int, bool);
+	void(*func_red)(ChessBoard&, int, bool);
+	void(*func_blue)(ChessBoard&, int, bool);
 	clock_t t_start, t_finish;		//Timer Setup
 	double t_totaltime;				//Timer Setup
 	srand((unsigned)time(NULL));	//Srand
@@ -70,8 +70,8 @@ void Model_AI_Game()
 	for (int n = 1; n<200; n++)
 	{
 		//system("pause");
-		BOARD NewBoard;
-		NewBoard.PrintBoard();
+		ChessBoard NewChessBoardArray;
+		NewChessBoardArray.PrintCB();
 		int player = 1 - (2 * (n % 2));//take turns to be the first one
 		cout << "[GAME] No" << n << " Have Began. ";
 		printf("%s Move First", player == RED ? "RED" : "BLUE");
@@ -88,8 +88,8 @@ void Model_AI_Game()
 			Cprintf(blue_name, 9);
 			cout << "Win[" << blue_count << "]" << endl;
 
-			//w = GetBoardWinner(NewBoard, -player);
-			w = NewBoard.Winner();
+			//w = GetChessBoardArrayWinner(NewChessBoardArray, -player);
+			w = NewChessBoardArray.Winner();
 
 			if (w == RED)
 			{
@@ -105,19 +105,19 @@ void Model_AI_Game()
 			/*if (player == RED)
 			{
 
-				func_red(NewBoard, player, true);
+				func_red(NewChessBoardArray, player, true);
 			}
 			else
 			{
 
-				func_blue(NewBoard, player, true);
+				func_blue(NewChessBoardArray, player, true);
 			}*/
 			t_finish = clock();
 			t_totaltime = (double)(t_finish - t_start) / CLOCKS_PER_SEC;
 			cout << "\n消耗时间为" << t_totaltime << "秒！" << endl;
 			player = -player;//玩家切换
-			NewBoard.PrintBoard();//显示局面
-			w = NewBoard.Winner();
+			NewChessBoardArray.PrintCB();//显示局面
+			w = NewChessBoardArray.Winner();
 			if (w == RED)
 			{
 				red_count++;
@@ -132,15 +132,15 @@ void Model_AI_Game()
 	}
 	cout << "ALL GAME FINISH\n\n\nRED Win" << red_count << "    BLUE Win" << blue_count << endl;
 }
-void Model_Board_Winner_Test()
+void Model_ChessBoardArray_Winner_Test()
 {
 	while (1)
 	{
 		cout << "New Test Start" << endl;
-		BOARD Test;
-		//Test.LoadBoard();
-		int r =1;// = GetBoardWinner(Test, BLUE);
-		int b =0;// = GetBoardWinner(Test, RED);
+		ChessBoard Test;
+		//Test.LoadChessBoardArray();
+		int r =1;// = GetChessBoardArrayWinner(Test, BLUE);
+		int b =0;// = GetChessBoardArrayWinner(Test, RED);
 		if (r || b)
 		{
 			cout << "The Winner is";
@@ -161,9 +161,9 @@ void Model_Board_Winner_Test()
 		system("pause");
 	}
 }
-void Model_Define_Board(BOARD &CB)
+void Model_Define_ChessBoardArray(ChessBoard &CB)
 {
-	//CB.LoadBoard();
+	//CB.LoadChessBoardArray();
 	cout << "Define Finish!" << endl;
 	system("pause");
 	system("CLS");
@@ -174,8 +174,8 @@ void Model_Define_Chain()
 	while (1)
 	{
 		cout << "New Test Start" << endl;
-		BOARD Test;
-		//Test.LoadBoard();
+		ChessBoard Test;
+		//Test.LoadChessBoardArray();
 		cout << "New Test Start" << endl;
 		//GameTurnMove(Test, RED, true);
 		system("pause");
@@ -196,14 +196,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	double totaltime;				//Timer Setup
 	srand((unsigned)time(NULL));	//Srand 
 	Info();							//Show Game Infomation
-	BOARD CB;						//Create a new chess board;
+	ChessBoard CB;						//Create a new chess board;
 
-	//Test
+	/*Time Test
 	start = clock();
 	finish = clock();
 	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
 	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
+	*/
 
+	//Test
+	
+	
 	//Choose Model
 	int model;
 	cin >> model;
@@ -214,9 +218,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	else if (model == 2)
 		Model_Define_Chain();
 	else if (model == 3)
-		Model_Board_Winner_Test();
+		Model_ChessBoardArray_Winner_Test();
 	else
-		Model_Define_Board(CB);
+		Model_Define_ChessBoardArray(CB);
 
 
 	for (;;)
@@ -226,20 +230,20 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (W == RED)
 		{
 			cout << "Red Win" << endl;
-			CB.PrintBoard();
+			CB.PrintCB();
 			system("pause");
 			break;
 		}
 		if (W == BLUE)
 		{
 			cout << "Blue Win。" << endl;
-			CB.PrintBoard();
+			CB.PrintCB();
 			system("pause");
 			break;
 		}
 
 		//take turns to move
-		CB.PrintBoard();
+		CB.PrintCB();
 		cout << "\n【0】Human  【1】AI" << endl;
 		int com;
 		for (;;)
@@ -256,10 +260,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (com == 0)
 		{
 			system("cls");
-			CB.PrintBoard();
+			CB.PrintCB();
 			for (;;)
 			{
-				cout << "\nInput LOCATION and PLAYER，such as \"2 1 1\"" << endl;
+				cout << "\nInput LocATION and PLAYER，such as \"2 1 1\"" << endl;
 				int locx, locy, owner;
 				scanf_s("%d %d %d", &locx, &locy, &owner);
 				if ((owner == 1 || owner == 2) && locx >= 0 && locx <= (LEN - 1) && locy >= 0 && locy <= (LEN - 1))//limit the range of input
@@ -268,8 +272,8 @@ int _tmain(int argc, _TCHAR* argv[])
 						owner = -1;
 					if ((OddNum(locx) && EvenNum(locy)) || (EvenNum(locx) && OddNum(locy)))//'x' and 'y' should be a odd number and a even number
 					{
-						MOVE m = NewMove(locx, locy, owner);
-						CB.Move(m, true);
+						Move m = NewMove(locx, locy, owner);
+						CB.GameMove(m, true);
 						break;
 					}
 					else

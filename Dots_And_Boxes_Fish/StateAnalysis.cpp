@@ -1,9 +1,15 @@
 #include "stdafx.h"
-#include "GameDefine.h"
 #include "windows.h"
 #include <iostream>
 
-sint BOARD::GetStateWinner(sint NextPlayer)
+#include "GameDefine.h"
+#include "StateAnalysis.h"
+
+
+using namespace std;
+
+sint ChessBoard::GetStateWinner(sint NextPlayer)
 {
-	sint BoxesType[BOXLEN][BOXLEN];
+	//sint BoxesType[BOXLEN][BOXLEN];
+	return 0;
 }

@@ -9,21 +9,21 @@
 
 //BASIC DEFINITION
 
-/*
-LEN is the length of array.
-BOXLEN is the length of the game grid. in this program only square grid can be defined.
-BOXNUM is the total number of boxes.
-MOVENUM is the total number of moves.
-*/
+
+//LEN is the length of array.
+//BOXLEN is the length of the game grid. in this program only square grid can be defined.
+//BOXNUM is the total number of boxes.
+//MoveNUM is the total number of moves.
+
 
 #define LEN 11
 #define BOXLEN 5
 #define BOXNUM 25
-#define MOVENUM 60
+#define MoveNUM 60
 
-/*
-here we define some constant express the different piece in the array
-*/
+
+//here we define some constant express the different piece in the array
+
 #define EMPTY 0
 #define RED 1
 #define BLUE -1
@@ -35,12 +35,12 @@ here we define some constant express the different piece in the array
 #define RED_BOX 2
 #define BLUE_BOX -2
 
-/* 
-'char' is redefined as 'sint' for easier substitution. 
-'char' instead of 'int' in order to save memory.
-*/
+ 
+//'char' is redefined as 'sint' for easier substitution. 
+//'char' instead of 'int' in order to save memory.
+
 typedef char sint;
-using Board = sint[LEN][LEN];
+using ChessBoardArray = sint[LEN][LEN];
 
 //debug model
 #define DEBUG true
@@ -48,17 +48,21 @@ using Board = sint[LEN][LEN];
 
 //CLASS DEFINITION
 
-/*
-class LOC mean LOCATION. which consist of x and y.
-*/
-class LOC
+
+//class Loc mean LocATION. which consist of x and y.
+class Loc
 {
-friend bool EqualLoc(LOC &a, LOC &b);
+friend bool EqualLoc(Loc &a, Loc &b);
 protected:
-	sint x = 0;
-	sint y = 0;
+	sint x;
+	sint y;
 public:
-	LOC::LOC(sint &lx, sint &ly)
+	Loc()
+	{
+		x = 0;
+		y = 0;
+	}
+	Loc(sint &lx, sint &ly)
 	{
 		x = lx;
 		y = ly;
@@ -71,20 +75,19 @@ public:
 	
 };
 
-/*
-class MOVE is and standard move which include the location and player, and a POINTER to the new board.
-*/
-class MOVE :public LOC
+
+//class Move is and standard move which include the location and player, and a POINTER to the new board.
+class Move :public Loc
 {
-	friend class BOARD;
+	friend class ChessBoard;
 protected:
 	sint player = 0;
 public:
-	MOVE(sint &lx, sint &ly, sint &lp) :LOC(lx, ly)
+	Move(sint &lx, sint &ly, sint &lp) :Loc(lx, ly)
 	{
 		player = lp;
 	}
-	void Set(sint &lx, sint &ly, sint &lp)
+	inline void Set(sint &lx, sint &ly, sint &lp)
 	{
 		x = lx;
 		y = ly;
@@ -99,30 +102,30 @@ public:
 
 
 /*
-class 'BOARD' is the foundational class, which included an array that express an standard chess board.
+class 'ChessBoard' is the foundational class, which included an array that express an standard chess board.
 it is a base class.
 */
-class BOARD
+class ChessBoard
 {
 
 
 public:
 	//data
-	Board board;//this array express an standard chess board.
+	ChessBoardArray board;//this array express an standard chess board.
 
 	//function
-	BOARD();
-	BOARD(Board &CB);
-	BOARD(Board &CB, MOVE &Move);
-	void Move(MOVE &Move, bool ShowMsg);
-	void BOARD::MoveMsg(MOVE &m);
-	void SetBoard(Board &Source);
+	ChessBoard();
+	ChessBoard(ChessBoardArray &CB);
+	ChessBoard(ChessBoardArray &CB, Move &Move);
+	void GameMove(Move &Move, bool show_msg);
+	void GameMoveMsg(Move &m);
+	void SetChessBoard(ChessBoardArray &source);
 	sint Winner();
-	void PrintBoard();
+	void PrintCB();
 	
 
 protected:
-	inline int BOARD::GetPlayerBoxes(sint Player)
+	inline int ChessBoard::GetPlayerBoxes(sint Player)
 	{
 		int b = 0;
 		sint box = Player * 2;
@@ -169,15 +172,15 @@ private:
 'CprintfNum' can print colorful integer need not convert int to string. 
 */
 void Cprintf(char* str, WORD color, ...);
-void CprintfNum(int Num, int color);
+void CprintfNum(int num, int color);
 
-bool EqualLoc(LOC &a, LOC &b);
-bool EqualBoard(Board &a, Board &b);
+bool EqualLoc(Loc &a, Loc &b);
+bool EqualChessBoard(ChessBoardArray &a, ChessBoardArray &b);
 
-LOC NewLoc(sint &x, sint &y);
-LOC NewLoc(int &x, int &y);
-MOVE NewMove(sint &x, sint &y, sint &p);
-MOVE NewMove(int &x, int &y, int &p);
+Loc NewLoc(sint &x, sint &y);
+Loc NewLoc(int &x, int &y);
+Move NewMove(sint &x, sint &y, sint &p);
+Move NewMove(int &x, int &y, int &p);
 bool OddNum(sint &num);
 bool OddNum(int &num);
 bool EvenNum(sint &num);

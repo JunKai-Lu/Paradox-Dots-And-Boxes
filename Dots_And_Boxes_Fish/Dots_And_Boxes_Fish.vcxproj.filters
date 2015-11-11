@@ -33,6 +33,9 @@
     <ClInclude Include="StateAnalysis.h">
       <Filter>Head File</Filter>
     </ClInclude>
+    <ClInclude Include="SearchAlgorithm.h">
+      <Filter>Head File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +48,9 @@
       <Filter>Main File</Filter>
     </ClCompile>
     <ClCompile Include="StateAnalysis.cpp">
+      <Filter>Main File</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchAlgorithm.cpp">
       <Filter>Main File</Filter>
     </ClCompile>
   </ItemGroup>

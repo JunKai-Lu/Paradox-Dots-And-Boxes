@@ -6,7 +6,7 @@
 using namespace std;
 
 
-BOARD::BOARD()
+ChessBoard::ChessBoard()
 {
 	for (sint y = 0; y < LEN; y++)
 	{
@@ -21,22 +21,24 @@ BOARD::BOARD()
 		}
 	}
 }
-BOARD::BOARD(Board &CB)
+ChessBoard::ChessBoard(ChessBoardArray &chessboard)
 {
-	SetBoard(CB);
+	SetChessBoard(chessboard);
 }
-BOARD::BOARD(Board &CB, MOVE &Move)
+ChessBoard::ChessBoard(ChessBoardArray &chessboard, Move &move)
 {
-	SetBoard(CB);
+	//copy the chessboard first then make one move in order to create a new state.
+	SetChessBoard(chessboard);
+	GameMove(move, false);
 }
-void BOARD::Move(MOVE &Move, bool ShowMsg)
+void ChessBoard::GameMove(Move &move, bool show_msg)
 {
 	/*
 	CAUTION: if edge (x,y) and the boxes near by it have been captured, the function will change the boxes' belonger.  
 	*/
 	if (DEBUG)
 	{
-		if (board[Move.x][Move.y] != EDGE)
+		if (board[move.x][move.y] != EDGE)
 		{
 			cout << "WARNING [Wrong Edge Location]" << endl;
 			system("pause");
@@ -44,41 +46,41 @@ void BOARD::Move(MOVE &Move, bool ShowMsg)
 	}
 
 	//if 'ShowMsg' is true then sent message.
-	if (ShowMsg)
-		MoveMsg(Move);
+	if (show_msg)
+		GameMoveMsg(move);
 
 	//change the value of the location of board.
-	board[Move.x][Move.y] = Move.player;
+	board[move.x][move.y] = move.player;
 	
 	//check if there is any box is completed.
 
-	if (OddNum(Move.x)&&EvenNum(Move.y))//horizonal
+	if (OddNum(move.x)&&EvenNum(move.y))//horizonal
 	{
-		if (Move.y + 1 < LEN - 1)
-			if (GetBoxCompleted(Move.x, Move.y + 1))
-				board[Move.x][Move.y + 1] = Move.player*2;
-		if (Move.y - 1 > 0)
-			if (GetBoxCompleted(Move.x, Move.y - 1))
-				board[Move.x][Move.y - 1] = Move.player*2;	
+		if (move.y + 1 < LEN - 1)
+			if (GetBoxCompleted(move.x, move.y + 1))
+				board[move.x][move.y + 1] = move.player*2;
+		if (move.y - 1 > 0)
+			if (GetBoxCompleted(move.x, move.y - 1))
+				board[move.x][move.y - 1] = move.player*2;	
 	}
-	else if (OddNum(Move.y) && EvenNum(Move.x))//vertical
+	else if (OddNum(move.y) && EvenNum(move.x))//vertical
 	{
-		if (Move.x + 1 < LEN - 1)
-			if (GetBoxCompleted(Move.x + 1, Move.y))
-				board[Move.x + 1][Move.y] = Move.player*2;
-		if (Move.x - 1 > 0)
-			if (GetBoxCompleted(Move.x - 1, Move.y))
-				board[Move.x - 1][Move.y] = Move.player*2;
+		if (move.x + 1 < LEN - 1)
+			if (GetBoxCompleted(move.x + 1, move.y))
+				board[move.x + 1][move.y] = move.player*2;
+		if (move.x - 1 > 0)
+			if (GetBoxCompleted(move.x - 1, move.y))
+				board[move.x - 1][move.y] = move.player*2;
 	}
 	else
 	{
-		cout << "WARNING: [Wrong Move]" << endl;
+		cout << "WARNING: [Wrong move]" << endl;
 		system("pause");
 	}
 	
 
 }
-void BOARD::MoveMsg(MOVE &m)
+void ChessBoard::GameMoveMsg(Move &m)
 {
 	std::cout << "===== Move Message =====" << std::endl;
 	std::cout << "Msg: ";
@@ -94,14 +96,13 @@ void BOARD::MoveMsg(MOVE &m)
 	Cprintf(")\n", 10);
 	std::cout << "===== Move Message =====" << std::endl;
 }
-void BOARD::SetBoard(Board &Source)
+void ChessBoard::SetChessBoard(ChessBoardArray &source)
 {
 	for (int i = 0; i < LEN; i++)
 		for (int j = 0; j < LEN; j++)
-			board[i][j] = Source[i][j];
+			board[i][j] = source[i][j];
 }
-
-sint BOARD::Winner()
+sint ChessBoard::Winner()
 {
 	int RedBoxes = GetPlayerBoxes(RED);
 	int BlueBoxes = GetPlayerBoxes(BLUE);
@@ -114,10 +115,9 @@ sint BOARD::Winner()
 	}
 	return 0;
 }
-
-void BOARD::PrintBoard()
+void ChessBoard::PrintCB()
 {
-	//Print Chess Board
+	//Print Chess ChessBoardArray
 	cout << "  ";
 	for (int i = 0; i <= (LEN - 1); i++)
 	{
@@ -217,18 +217,18 @@ void Cprintf(char* str, WORD color, ...)
 	cprintf("!", 4);	//Brown
 	*/
 }
-void CprintfNum(int Num, int color)
+void CprintfNum(int num, int color)
 {
 	char str[4];
-	sprintf_s(str, "%d", Num);
+	sprintf_s(str, "%d", num);
 	Cprintf(str, color);
 }
 
-bool EqualLoc(LOC &a, LOC &b)
+bool EqualLoc(Loc &a, Loc &b)
 {
 	return ((a.x == b.x) && (a.y == b.y));
 }
-bool EqualBoard(Board &a, Board &b)
+bool EqualChessBoardArray(ChessBoardArray &a, ChessBoardArray &b)
 {
 	for (int y = 0; y < LEN; y++)
 		for (int x = 0; x < LEN; x++)
@@ -236,29 +236,29 @@ bool EqualBoard(Board &a, Board &b)
 				return false;
 	return true;
 }
-LOC NewLoc(sint &x, sint &y)
+Loc NewLoc(sint &x, sint &y)
 {
-	LOC l(x, y);
+	Loc l(x, y);
 	return l;
 }
-LOC NewLoc(int &x, int &y)
+Loc NewLoc(int &x, int &y)
 {
 	sint lx = (sint)x;
 	sint ly = (sint)y;
-	LOC l(lx, ly);
+	Loc l(lx, ly);
 	return l;
 }
-MOVE NewMove(sint &x, sint &y, sint &p)
+Move NewMove(sint &x, sint &y, sint &p)
 {
-	MOVE m(x, y, p);
+	Move m(x, y, p);
 	return m;
 }
-MOVE NewMove(int &x, int &y, int &p)
+Move NewMove(int &x, int &y, int &p)
 {
 	sint sx = x;
 	sint sy = y;
 	sint sp = p;
-	MOVE m(sx, sy, sp);
+	Move m(sx, sy, sp);
 	return m;
 }
 bool OddNum(sint &num)
