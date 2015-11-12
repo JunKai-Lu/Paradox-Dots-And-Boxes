@@ -13,3 +13,5 @@ sint ChessBoard::GetStateWinner(sint NextPlayer)
 	//sint BoxesType[BOXLEN][BOXLEN];
 	return 0;
 }
+
+GetDeadChainExist

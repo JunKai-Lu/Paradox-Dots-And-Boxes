@@ -35,6 +35,10 @@
 #define RED_BOX 2
 #define BLUE_BOX -2
 
+#define FULL_BOX 0		//满格
+#define DEAD_BOX 1		//死格
+#define CHAIN_BOX 2		//链格
+#define FREE_BOX 3		//自由格
  
 //'char' is redefined as 'sint' for easier substitution. 
 //'char' instead of 'int' in order to save memory.
@@ -162,6 +166,7 @@ protected:
 private:
 	//STATE ALALYSIS
 	sint GetStateWinner(sint NextPlayer);
+	bool GetDeadChainExist(sint box_x, sint box_y);
 };
 
 
