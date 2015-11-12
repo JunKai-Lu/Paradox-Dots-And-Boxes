@@ -14,7 +14,7 @@ sint ChessBoard::GetStateWinner(sint NextPlayer)
 	return 0;
 }
 
-bool ChessBoard::BoxBelongToDeadChainBool(sint box_x, sint box_y)
+bool ChessBoard::GetBoxBelongToDeadChainBool(sint box_x, sint box_y)
 {
 	if (GetBoxLiberties(box_x, box_y) == DEAD_BOX)//首先这个格子必须本身是一个C型格
 	{

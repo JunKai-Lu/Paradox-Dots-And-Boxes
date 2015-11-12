@@ -93,6 +93,10 @@ class Move :public Loc
 protected:
 	sint player = 0;
 public:
+	Move() :Loc()
+	{
+		player = 0;
+	}
 	Move(sint &lx, sint &ly, sint &lp) :Loc(lx, ly)
 	{
 		player = lp;
@@ -171,11 +175,10 @@ protected:
 		return 0;
 	}
 
-private:
 	//STATE ALALYSIS
 	sint GetStateWinner(sint NextPlayer);
 	bool AnyBoxBelongToDeadChain();
-	bool BoxBelongToDeadChainBool(sint box_x, sint box_y);
+	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);
 };
 
 
