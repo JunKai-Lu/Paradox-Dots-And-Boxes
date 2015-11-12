@@ -15,7 +15,7 @@
 //BOXNUM is the total number of boxes.
 //MoveNUM is the total number of moves.
 
-
+#define EMPTY 0
 #define LEN 11
 #define BOXLEN 5
 #define BOXNUM 25
@@ -24,6 +24,7 @@
 
 //here we define some constant express the different piece in the array
 
+/*
 #define EMPTY 0
 #define RED 1
 #define BLUE -1
@@ -35,11 +36,16 @@
 #define RED_BOX 2
 #define BLUE_BOX -2
 
-#define FULL_BOX 0		//满格
-#define DEAD_BOX 1		//死格
-#define CHAIN_BOX 2		//链格
-#define FREE_BOX 3		//自由格
- 
+#define FULLBOX 0		//满格
+#define DEADBOX 1		//死格
+#define CHAINBOX 2		//链格
+#define FREEBOX 3		//自由格
+*/
+enum ChessBoardType
+{
+	DOT = 0, RED = 1, BLUE = -1, RED_BOX = 2, BLUE_BOX = -2, EDGE = 10, BOX = 20
+};
+
 //'char' is redefined as 'sint' for easier substitution. 
 //'char' instead of 'int' in order to save memory.
 
@@ -91,7 +97,7 @@ public:
 	{
 		player = lp;
 	}
-	inline void Set(sint &lx, sint &ly, sint &lp)
+	virtual void Set(sint &lx, sint &ly, sint &lp)
 	{
 		x = lx;
 		y = ly;
@@ -112,16 +118,18 @@ it is a base class.
 class ChessBoard
 {
 
-
-public:
+protected:
 	//data
 	ChessBoardArray board;//this array express an standard chess board.
 
+public:
+	
+
 	//function
-	ChessBoard();
-	ChessBoard(ChessBoardArray &CB);
-	ChessBoard(ChessBoardArray &CB, Move &Move);
-	void GameMove(Move &Move, bool show_msg);
+	ChessBoard();										//constructed function
+	ChessBoard(ChessBoardArray &CB);					//constructed function
+	ChessBoard(ChessBoardArray &CB, Move &Move);		//constructed function
+	void GameMove(Move &Move, bool show_msg);			//the basic function of this game. only through it can u change the chessboard.
 	void GameMoveMsg(Move &m);
 	void SetChessBoard(ChessBoardArray &source);
 	sint Winner();
@@ -129,7 +137,7 @@ public:
 	
 
 protected:
-	inline int ChessBoard::GetPlayerBoxes(sint Player)
+	inline int GetPlayerBoxes(sint Player)
 	{
 		int b = 0;
 		sint box = Player * 2;
@@ -166,7 +174,8 @@ protected:
 private:
 	//STATE ALALYSIS
 	sint GetStateWinner(sint NextPlayer);
-	bool GetDeadChainExist(sint box_x, sint box_y);
+	bool AnyBoxBelongToDeadChain();
+	bool BoxBelongToDeadChainBool(sint box_x, sint box_y);
 };
 
 

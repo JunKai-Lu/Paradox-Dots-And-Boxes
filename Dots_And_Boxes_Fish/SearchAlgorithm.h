@@ -19,21 +19,39 @@ public:
 	//once it point to any class ,that we must 'delete' thoes object before current class is released.
 	//if the pointer is nullptr that means we do not crearte a corresponding object for this pointer.
 	
+	MctsNode *corresponded_node;	//point to the new node which stands the current node implemented this move; 
+	MctsMove *next_move;			//point to the next move of current node;
+
 	MctsMove(sint lx, sint ly, sint lp) :Move(lx,ly,lp)
 	{
 		corresponded_node = nullptr;
 		next_move = nullptr;
 	}
-	MctsNode *corresponded_node;	//point to the new node which stands the current node implemented this move; 
-	MctsMove *next_move;			//point to the next move of current node;
-	~MctsMove();					//the destructor function need to delete the corresponded node if it is not nullptr;
+	virtual void Set(sint &lx, sint &ly, sint &lp,MctsNode *node,MctsMove *move)
+	{
+		x = lx;
+		y = ly;
+		player = lp;
+		corresponded_node = node;
+		next_move = move;
+	}
+	~MctsMove()//the destructor function need to delete the corresponded node if it is not nullptr;
+	{
+		// if those pointer are not nullptr , the object they pointed to should be deleted.
+		if (corresponded_node != nullptr)
+			delete corresponded_node;
+		if (next_move != nullptr)
+			delete next_move;
+	}
+	
 };
 
 
 //class MctsNode means a node of searching tree.
 //any 'MctsNode' object include complete chessboard infomation.
-//when 'MctsNode' object is created, all possible moves would be defined as a linked list.
+//when 'MctsNode' object is created, all available moves would be defined as a linked list.
 //NOTICE: the 'avg_value' is the victory rate of the current node's father node.
+
 class MctsNode:public ChessBoard
 {	
 	//when constructed function work, it will
@@ -55,12 +73,16 @@ public:
 
 	sint owner;						//the player who is preparing to take next move. we define he is the owner of this node.
 	sint node_winner;				//if the game do not finish , the value is 0.
-
-	
 	MctsMove *move_list_head;		//this pointer will point to the head of move linked list. 
-
-	
 	float avg_value;				//the avg value of this value, it is equal to [1 - (the average value of all child nodes)].
+
+	//destructor function
+	~MctsNode()
+	{
+		// if the pointer are not nullptr , the 'Move' object it pointed to should be deleted.
+		if (move_list_head != nullptr)
+			delete move_list_head;
+	}
 
 private:
 	int visited_times;				//the number of this node has been visited.
@@ -102,6 +124,8 @@ private:
 		for (node = move_list_head;node->next_move!=nullptr&&node->corresponded_node!=nullptr;node = node->next_move);
 		return node;
 	}
+
+
 };
 
 

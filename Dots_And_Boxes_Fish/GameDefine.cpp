@@ -104,11 +104,21 @@ void ChessBoard::SetChessBoard(ChessBoardArray &source)
 }
 sint ChessBoard::Winner()
 {
-	int RedBoxes = GetPlayerBoxes(RED);
-	int BlueBoxes = GetPlayerBoxes(BLUE);
-	if ((RedBoxes + BlueBoxes) >= BOXNUM)
+	int red = 0;
+	int blue = 0;
+	for (int i = 0; i < LEN; i++)
 	{
-		if (RedBoxes>BlueBoxes)
+		for (int j = 0; j < LEN; j++)
+		{
+			if (board[i][j] == RED_BOX)
+				red++;
+			if (board[i][j] == BLUE_BOX)
+				blue++;
+		}
+	}
+	if (red + blue >= BOXNUM)
+	{
+		if (red > blue)
 			return RED;
 		else
 			return BLUE;
@@ -154,7 +164,7 @@ void ChessBoard::PrintCB()
 					//cprintf("©¥",15);
 				}
 			}
-			else if (board[i][j] == RED_EDGE)
+			else if (board[i][j] == RED)
 			{
 				if (OddNum(j) && EvenNum(i))
 				{
@@ -165,7 +175,7 @@ void ChessBoard::PrintCB()
 					Cprintf("©¥", 12);
 				}
 			}
-			else if (board[i][j] == BLUE_EDGE)
+			else if (board[i][j] == BLUE)
 			{
 				if (OddNum(j) && EvenNum(i))
 				{
