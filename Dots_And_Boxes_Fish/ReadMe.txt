@@ -7,3 +7,4 @@ Dots		Even	Even
 //Update
 
 11.9 complete basic game code but without algorithm.
+11.13 complete basic searchi flamework.

@@ -14,33 +14,12 @@
 //BOXLEN is the length of the game grid. in this program only square grid can be defined.
 //BOXNUM is the total number of boxes.
 //MoveNUM is the total number of moves.
-
-#define EMPTY 0
-#define LEN 11
-#define BOXLEN 5
-#define BOXNUM 25
-#define MoveNUM 60
-
+enum GameConstant
+{
+	EMPTY = 0, LEN = 11, BOXLEN = 5, BOXNUM = 25, MoveNUM = 60
+};
 
 //here we define some constant express the different piece in the array
-
-/*
-#define EMPTY 0
-#define RED 1
-#define BLUE -1
-#define DOT 0
-#define EDGE 10
-#define BOX 20
-#define RED_EDGE 1
-#define BLUE_EDGE -1
-#define RED_BOX 2
-#define BLUE_BOX -2
-
-#define FULLBOX 0		//满格
-#define DEADBOX 1		//死格
-#define CHAINBOX 2		//链格
-#define FREEBOX 3		//自由格
-*/
 enum ChessBoardType
 {
 	DOT = 0, RED = 1, BLUE = -1, RED_BOX = 2, BLUE_BOX = -2, EDGE = 10, BOX = 20
@@ -51,6 +30,7 @@ enum ChessBoardType
 
 typedef char sint;
 using ChessBoardArray = sint[LEN][LEN];
+using BoxesArray = sint[BOXLEN][BOXLEN];
 
 //debug model
 #define DEBUG true
@@ -72,12 +52,12 @@ public:
 		x = 0;
 		y = 0;
 	}
-	Loc(sint &lx, sint &ly)
+	Loc(sint lx, sint ly)
 	{
 		x = lx;
 		y = ly;
 	}
-	virtual void Set(sint &lx, sint &ly)
+	virtual void Set(sint lx, sint ly)
 	{
 		x = lx;
 		y = ly;
@@ -97,11 +77,11 @@ public:
 	{
 		player = 0;
 	}
-	Move(sint &lx, sint &ly, sint &lp) :Loc(lx, ly)
+	Move(sint lx, sint ly, sint lp) :Loc(lx, ly)
 	{
 		player = lp;
 	}
-	virtual void Set(sint &lx, sint &ly, sint &lp)
+	virtual void Set(sint lx, sint ly, sint lp)
 	{
 		x = lx;
 		y = ly;
@@ -130,10 +110,10 @@ public:
 	
 
 	//function
-	ChessBoard();										//constructed function
-	ChessBoard(ChessBoardArray &CB);					//constructed function
-	ChessBoard(ChessBoardArray &CB, Move &Move);		//constructed function
-	void GameMove(Move &Move, bool show_msg);			//the basic function of this game. only through it can u change the chessboard.
+	ChessBoard();											//constructed function
+	ChessBoard(ChessBoardArray &chessboard);				//constructed function
+	ChessBoard(ChessBoardArray &chessboard, Move &move);	//constructed function
+	void GameMove(Move &Move, bool show_msg);				//the basic function of this game. only through it can u change the chessboard.
 	void GameMoveMsg(Move &m);
 	void SetChessBoard(ChessBoardArray &source);
 	sint Winner();
@@ -176,6 +156,20 @@ protected:
 	}
 
 	//STATE ALALYSIS
+	void DefineBoxesType(BoxesArray &boxes_type)
+	{
+		for (int by = 0; by < BOXLEN; by++)
+		{
+			for (int bx = 0; bx < BOXLEN - 1; bx++)
+			{
+				int lib = GetBoxLiberties(bx * 2 - 1, by * 2 - 1);
+				if (lib == 0){ boxes_type[bx][by] = FULL_BOX; }
+				else if (lib == 1){ boxes_type[bx][by] = DEAD_BOX; }
+				else if (lib == 2){ boxes_type[bx][by] = CHAIN_BOX; }
+				else{ boxes_type[bx][by] = FREE_BOX; }
+			}
+		}
+	}
 	sint GetStateWinner(sint NextPlayer);
 	bool AnyBoxBelongToDeadChain();
 	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);

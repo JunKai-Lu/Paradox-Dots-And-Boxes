@@ -8,9 +8,15 @@
 
 using namespace std;
 
+
+
 sint ChessBoard::GetStateWinner(sint NextPlayer)
 {
-	//sint BoxesType[BOXLEN][BOXLEN];
+	BoxesArray boxes_type;
+	DefineBoxesType(boxes_type);//Define all chain box
+
+			
+
 	return 0;
 }
 

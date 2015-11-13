@@ -7,11 +7,14 @@ More infomation, please read README.TXT which included in this project.
 */
 
 #include "stdafx.h"
-#include "GameDefine.h"
 #include <iostream>
 #include "windows.h"
 #include "time.h"
 #include "math.h"
+
+#include "GameDefine.h"
+#include "StateAnalysis.h"
+#include "SearchAlgorithm.h"
 
 using namespace std;
 
@@ -187,7 +190,7 @@ void Info()
 	Cprintf("[Paradox Fish Dots-and-Boxes Engine]\n\n", 14);
 	Cprintf("		Version:1.0.1. \n\n", 11);
 	Cprintf("[  0  ]	Default Game Model \n[  1  ]	Agorithm Testing\n[  2  ]	Testing Model\n[  3  ]	Winner Testing\n[other]	Define Game\n\n", 10);
-	Cprintf("Less Memory, More Effective", 8);
+	Cprintf("Less Memory, More Effective\n\n", 8);
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -196,7 +199,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	double totaltime;				//Timer Setup
 	srand((unsigned)time(NULL));	//Srand 
 	Info();							//Show Game Infomation
-	ChessBoard CB;						//Create a new chess board;
+	ChessBoard CB;					//Create a new chess board;
 
 	/*Time Test
 	start = clock();
@@ -205,8 +208,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
 	*/
 
-	//Test
 	
+
+	//Test
+	MctsNode HH;
+	HH.test_moves();
 	
 	//Choose Model
 	int model;

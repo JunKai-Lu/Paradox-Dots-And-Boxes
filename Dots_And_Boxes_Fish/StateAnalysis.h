@@ -18,8 +18,8 @@ enum BoxType
 class BoxInfo
 {
 public:
-	BoxType Type;				//include CPUTURED, DEAD_BOX, CHAIN_BOX, FREE_BOX
-	int BelongingChainNum;		//the number of the chain which this box belongs.
+	BoxType type;				//include CPUTURED, DEAD_BOX, CHAIN_BOX, FREE_BOX
+	int belonging_chain_num;	//the number of the chain which this box belong.
 };
 
 class ChainInfo

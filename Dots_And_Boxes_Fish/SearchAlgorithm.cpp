@@ -37,9 +37,9 @@ sint MctsNode::GetMovesWithBias()
 				board[x][y] = owner;//assume this player capture the edge.
 
 				if (
-					(y == 0 && GetBoxBelongToDeadChainBool(x, y + 1)) ||
-					(y == LEN - 1 && GetBoxBelongToDeadChainBool(x, y - 1)) ||
-					(y>0 && y < LEN - 1 && GetBoxBelongToDeadChainBool(x, y + 1) && GetBoxBelongToDeadChainBool(x, y - 1))
+					(y == 0 && !GetBoxBelongToDeadChainBool(x, y + 1)) ||
+					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(x, y - 1)) ||
+					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(x, y + 1) && !GetBoxBelongToDeadChainBool(x, y - 1))
 					)
 				{
 					//if the conditions are met, the edge is an available move.
@@ -63,9 +63,9 @@ sint MctsNode::GetMovesWithBias()
 				board[x][y] = owner;//assume this player capture the edge.
 
 				if (
-					(y == 0 && GetBoxBelongToDeadChainBool(y + 1,x)) ||
-					(y == LEN - 1 && GetBoxBelongToDeadChainBool(y - 1,x)) ||
-					(y>0 && y < LEN - 1 && GetBoxBelongToDeadChainBool(y + 1,x) && GetBoxBelongToDeadChainBool(y - 1,x))
+					(y == 0 && !GetBoxBelongToDeadChainBool(y + 1,x)) ||
+					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(y - 1,x)) ||
+					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(y + 1,x) && !GetBoxBelongToDeadChainBool(y - 1,x))
 					)
 				{
 					//if the conditions are met, the edge is an available move.

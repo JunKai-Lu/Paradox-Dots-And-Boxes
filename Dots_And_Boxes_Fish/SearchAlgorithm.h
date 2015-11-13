@@ -32,7 +32,7 @@ public:
 		corresponded_node = nullptr;
 		next_move = nullptr;
 	}
-	virtual void Set(sint &lx, sint &ly, sint &lp, MctsMove *move, MctsNode *node)
+	virtual void Set(sint lx, sint ly, sint lp, MctsMove *move, MctsNode *node)
 	{
 		x = lx;
 		y = ly;
@@ -48,7 +48,6 @@ public:
 //any 'MctsNode' object include complete chessboard infomation.
 //when 'MctsNode' object is created, all available moves would be defined as a linked list.
 //NOTICE: the 'avg_value' is the victory rate of the current node's father node.
-
 class MctsNode:public ChessBoard
 {	
 	//when constructed function work, it will
@@ -63,10 +62,39 @@ class MctsNode:public ChessBoard
 public:
 	MctsNode() :ChessBoard()
 	{
-		
+		//this is an empty object
+		owner = RED;				//assume the owner is RED for all empty object
+		node_winner = Winner();		
+		move_list_head.Set(0,0,0,nullptr,nullptr);
+		avg_value = 0;				
+		visited_times = 0;			//an empty object have never been visited.
+		total_child_node_num = 0;
+		existed_child_node_num = 0;
 	}
-	
+	MctsNode(ChessBoardArray &chessboard, Move &next_move,sint node_owner) :ChessBoard(chessboard, next_move)
+	{
+		owner = node_owner;							//initilize the 'owner' equal to the 'node_owner'
+		node_winner = Winner();						//that should change to GetStateWinner() but the func is still uncomplete.
+		visited_times = 1;							//initilize 'visited_times' to 1 because create node equal to first visit.
+		total_child_node_num = GetMovesWithBias();	//compute all available moves and save them as a linked list.
+		existed_child_node_num = 0;					//do not have any child node.
+		avg_value = 0;								//initilize to 0
+		//
+	}
 
+	void test_moves()
+	{
+		total_child_node_num = GetMovesWithBias();
+		std::cout << "total moves: [" << (int)total_child_node_num << " ]" << std::endl;
+		int i = 0;
+		for (MctsMove *move = &move_list_head; move->next_move != nullptr; move = move->next_move)
+		{
+			std::cout << "["<<i<<"] ";
+			i++;
+			move->Show();
+		}
+		std::cout << "all moves have output" << std::endl;
+	}
 
 	sint owner;						//the player who is preparing to take next move. we define he is the owner of this node.
 	sint node_winner;				//if the game do not finish , the value is 0.
@@ -116,5 +144,3 @@ private:
 
 
 };
-
-
