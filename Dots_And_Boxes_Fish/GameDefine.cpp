@@ -21,14 +21,14 @@ ChessBoard::ChessBoard()
 		}
 	}
 }
-ChessBoard::ChessBoard(ChessBoardArray &chessboard)
+ChessBoard::ChessBoard(ChessBoard &chessboard)
 {
-	SetChessBoard(chessboard);
+	SetChessBoard(chessboard.board);
 }
-ChessBoard::ChessBoard(ChessBoardArray &chessboard, Move &move)
+ChessBoard::ChessBoard(ChessBoard &chessboard, Move &move)
 {
 	//copy the chessboard first then make one move in order to create a new state.
-	SetChessBoard(chessboard);
+	SetChessBoard(chessboard.board);
 	GameMove(move, false);
 }
 void ChessBoard::GameMove(Move &move, bool show_msg)
@@ -201,6 +201,7 @@ void ChessBoard::PrintCB()
 	}
 	cout << "\n";
 }
+
 //some function
 
 void Cprintf(char* str, WORD color, ...) 

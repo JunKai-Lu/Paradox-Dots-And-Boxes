@@ -16,7 +16,7 @@
 //MoveNUM is the total number of moves.
 enum GameConstant
 {
-	EMPTY = 0, LEN = 11, BOXLEN = 5, BOXNUM = 25, MoveNUM = 60
+	EMPTY = 0, LEN = 11, BOXLEN = 5, BOXNUM = 25, MOVENUM = 60
 };
 
 //here we define some constant express the different piece in the array
@@ -30,14 +30,13 @@ enum ChessBoardType
 
 typedef char sint;
 using ChessBoardArray = sint[LEN][LEN];
-using BoxesArray = sint[BOXLEN][BOXLEN];
+
 
 //debug model
 #define DEBUG true
 
 
 //CLASS DEFINITION
-
 
 //class Loc mean LocATION. which consist of x and y.
 class Loc
@@ -69,7 +68,8 @@ public:
 //class Move is and standard move which include the location and player, and a POINTER to the new board.
 class Move :public Loc
 {
-	friend class ChessBoard;
+friend class ChessBoard;
+
 protected:
 	sint player = 0;
 public:
@@ -101,6 +101,7 @@ it is a base class.
 */
 class ChessBoard
 {
+friend class ChessBoardSolver;
 
 protected:
 	//data
@@ -111,20 +112,19 @@ public:
 
 	//function
 	ChessBoard();											//constructed function
-	ChessBoard(ChessBoardArray &chessboard);				//constructed function
-	ChessBoard(ChessBoardArray &chessboard, Move &move);	//constructed function
+	ChessBoard(ChessBoard &chessboard);						//constructed function
+	ChessBoard(ChessBoard &chessboard, Move &move);			//constructed function
 	void GameMove(Move &Move, bool show_msg);				//the basic function of this game. only through it can u change the chessboard.
-	void GameMoveMsg(Move &m);
-	void SetChessBoard(ChessBoardArray &source);
-	sint Winner();
-	void PrintCB();
-	
+	void GameMoveMsg(Move &m);								//sent a move message
+	void SetChessBoard(ChessBoardArray &source);			//set the value chess board array through copy from &source.
+	sint Winner();											//return a winner by normal game rule
+	void PrintCB();											//print the chessboard
 
 protected:
-	inline int GetPlayerBoxes(sint Player)
+	inline int GetPlayerBoxes(sint player)
 	{
 		int b = 0;
-		sint box = Player * 2;
+		sint box = player * 2;
 		for (int i = 0; i < LEN; i++)
 			for (int j = 0; j < LEN; j++)
 				if (board[i][j] == box)
@@ -155,24 +155,7 @@ protected:
 		return 0;
 	}
 
-	//STATE ALALYSIS
-	void DefineBoxesType(BoxesArray &boxes_type)
-	{
-		for (int by = 0; by < BOXLEN; by++)
-		{
-			for (int bx = 0; bx < BOXLEN - 1; bx++)
-			{
-				int lib = GetBoxLiberties(bx * 2 - 1, by * 2 - 1);
-				if (lib == 0){ boxes_type[bx][by] = FULL_BOX; }
-				else if (lib == 1){ boxes_type[bx][by] = DEAD_BOX; }
-				else if (lib == 2){ boxes_type[bx][by] = CHAIN_BOX; }
-				else{ boxes_type[bx][by] = FREE_BOX; }
-			}
-		}
-	}
-	sint GetStateWinner(sint NextPlayer);
-	bool AnyBoxBelongToDeadChain();
-	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);
+	
 };
 
 

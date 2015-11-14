@@ -203,16 +203,26 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	/*Time Test
 	start = clock();
+
+	MctsNode HH(CB, RED);
+	int n = 0;
+	for (int i = 0; i < 300000; i++)
+	{
+		if (HH.GetMovesWithBias() == 60)
+			n++;
+	}
+	
+	
+
 	finish = clock();
 	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
 	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
+	
 	*/
-
 	
 
 	//Test
-	MctsNode HH;
-	HH.test_moves();
+	
 	
 	//Choose Model
 	int model;

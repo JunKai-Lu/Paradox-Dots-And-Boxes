@@ -60,47 +60,15 @@ class MctsNode:public ChessBoard
 	//initilize 'avg_value' to 0 because the average value of this node is unknown.
 
 public:
-	MctsNode() :ChessBoard()
-	{
-		//this is an empty object
-		owner = RED;				//assume the owner is RED for all empty object
-		node_winner = Winner();		
-		move_list_head.Set(0,0,0,nullptr,nullptr);
-		avg_value = 0;				
-		visited_times = 0;			//an empty object have never been visited.
-		total_child_node_num = 0;
-		existed_child_node_num = 0;
-	}
-	MctsNode(ChessBoardArray &chessboard, Move &next_move,sint node_owner) :ChessBoard(chessboard, next_move)
-	{
-		owner = node_owner;							//initilize the 'owner' equal to the 'node_owner'
-		node_winner = Winner();						//that should change to GetStateWinner() but the func is still uncomplete.
-		visited_times = 1;							//initilize 'visited_times' to 1 because create node equal to first visit.
-		total_child_node_num = GetMovesWithBias();	//compute all available moves and save them as a linked list.
-		existed_child_node_num = 0;					//do not have any child node.
-		avg_value = 0;								//initilize to 0
-		//
-	}
-
-	void test_moves()
-	{
-		total_child_node_num = GetMovesWithBias();
-		std::cout << "total moves: [" << (int)total_child_node_num << " ]" << std::endl;
-		int i = 0;
-		for (MctsMove *move = &move_list_head; move->next_move != nullptr; move = move->next_move)
-		{
-			std::cout << "["<<i<<"] ";
-			i++;
-			move->Show();
-		}
-		std::cout << "all moves have output" << std::endl;
-	}
+	MctsNode();															//constructed function
+	MctsNode(ChessBoard &chessboard, sint node_owner);					//constructed function
+	MctsNode(ChessBoard &chessboard, Move &next_move, sint node_owner);	//constructed function
 
 	sint owner;						//the player who is preparing to take next move. we define he is the owner of this node.
 	sint node_winner;				//if the game do not finish , the value is 0.
 	MctsMove move_list_head;		//this pointer will point to the head of move linked list. 
 	float avg_value;				//the avg value of this value, it is equal to [1 - (the average value of all child nodes)].
-
+	
 private:
 	int visited_times;				//the number of this node has been visited.
 	sint total_child_node_num;		//the number of all feasible child node ,whatever it have been created or not.
@@ -108,7 +76,7 @@ private:
 	
 	//class function
 	
-	sint GetMovesWithBias();		//computing all possible moves with searching bias
+	
 
 	//compute UCB value for this node when selection.
 	inline float get_ucb_value(int total_visit_times)		
@@ -129,7 +97,7 @@ private:
 	}
 
 	//adding a new node to the searching tree and excuted simulation.
-	inline MctsNode *AddingNode()
+	inline MctsNode *AddingNode(MctsMove next_move)
 	{
 		
 	}
@@ -142,5 +110,28 @@ private:
 		return node;
 	}
 
-
+	/*
+	void test_moves()
+	{
+		total_child_node_num = GetMovesWithBias();
+		std::cout << "total moves: [" << (int)total_child_node_num << " ]" << std::endl;
+		int i = 0;
+		for (MctsMove *move = &move_list_head; move->next_move != nullptr; move = move->next_move)
+		{
+			std::cout << "["<<i<<"] ";
+			i++;
+			move->Show();
+		}
+		std::cout << "all moves have output" << std::endl;
+	}
+	*/
+private:
+	sint GetMovesWithBias();									//computing all possible moves with searching bias
+	sint GetMovesWithBias(Move moves[MOVENUM], sint player);	//a different function which would save all possible moves to a move array
+	bool AnyBoxBelongToDeadChain();
+	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);	
+	
+	sint GetStateWinner(sint next_player);
+	
+	
 };
