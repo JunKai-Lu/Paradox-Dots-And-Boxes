@@ -135,3 +135,6 @@ private:
 	
 	
 };
+
+bool CaptureDeadBox(sint player);
+void CaptureAllDeadBox(sint player);

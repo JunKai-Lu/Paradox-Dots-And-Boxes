@@ -119,6 +119,15 @@ public:
 	void SetChessBoard(ChessBoardArray &source);			//set the value chess board array through copy from &source.
 	sint Winner();											//return a winner by normal game rule
 	void PrintCB();											//print the chessboard
+	inline int GetBoxLiberties(sint x, sint y)
+	{
+		int edge = 0;
+		if (board[x + 1][y] == EDGE){ edge++; }
+		if (board[x - 1][y] == EDGE){ edge++; }
+		if (board[x][y + 1] == EDGE){ edge++; }
+		if (board[x][y - 1] == EDGE){ edge++; }
+		return edge;
+	}
 
 protected:
 	inline int GetPlayerBoxes(sint player)

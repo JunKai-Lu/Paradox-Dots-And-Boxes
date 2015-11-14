@@ -225,6 +225,17 @@ sint MctsNode::GetMovesWithBias()
 }
 
 
+bool CaptureDeadBox(ChessBoard &chessboard,sint player)
+{
+	for (sint y = 1; y < LEN-1; y += 2)
+	{
+		for (sint x = 1; x < LEN - 1; x += 2)
+		{
+			
+		}
+	}
+	return false;
+}
 
 
 
