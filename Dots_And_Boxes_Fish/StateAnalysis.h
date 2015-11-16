@@ -44,15 +44,12 @@ public:
 class ChessBoardSolver
 {
 public:
-	ChessBoardSolver(ChessBoard &chessboard,sint next_player)
-	{
-		sample = &chessboard;
-		first_player = next_player;
-	}
+	ChessBoardSolver(ChessBoard &cb, sint next_player);
 	sint CalculateWinner();			//return the winner of this state
 
 private:
-	ChessBoard *sample;				//analytical sample
+	//data member
+	ChessBoard *chessboard;			//analytical sample
 	BoxInfo boxes[BOXLEN][BOXLEN];	//boxes infomation
 	ChainInfo chains[BOXNUM];		//chains infomation
 	sint first_player;				//the player who is preparing to make move.

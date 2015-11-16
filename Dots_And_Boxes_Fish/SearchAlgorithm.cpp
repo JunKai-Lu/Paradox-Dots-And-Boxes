@@ -104,9 +104,9 @@ sint MctsNode::GetMovesWithBias(Move moves[MOVENUM], sint player)
 	//this function is mainly used to create random move.
 
 	int move_num = 0;
-	for (sint y = 0; y < LEN; y = y + 2)
+	for (sint y = 0; y < LEN; y +=2)
 	{
-		for (sint x = 1; x < LEN; x = x + 2)
+		for (sint x = 1; x < LEN; x +=2)
 		{
 			//in each iterator we check (x,y) and (y,x).
 			if (board[x][y] == EDGE)
@@ -225,16 +225,45 @@ sint MctsNode::GetMovesWithBias()
 }
 
 
-bool CaptureDeadBox(ChessBoard &chessboard,sint player)
+
+
+//class 'MctsSearch' is the major searching algorithm in this engine.
+//when the object is created, a new root node would be created according to the chessboard.
+
+//public interface.
+MctsSearch::MctsSearch(ChessBoard &cb, sint p)
+{
+	chessboard = &cb;					//the source chessboard.
+	player = p;							//set player who is preparing for next move.
+	root_node = new MctsNode(cb, p);	//create the root node according to the source chessboard.
+}
+
+//private function
+bool MctsSearch::CaptureDeadBox(bool show_msg)
 {
 	for (sint y = 1; y < LEN-1; y += 2)
 	{
 		for (sint x = 1; x < LEN - 1; x += 2)
 		{
-			
+			if (chessboard->GetBoxLiberties(x,y)==DEAD_BOX)
+			{
+				Move move;
+				if (chessboard->board[x + 1][y] == EDGE){ move.Set(x + 1, y, player); }
+				if (chessboard->board[x - 1][y] == EDGE){ move.Set(x - 1, y, player); }
+				if (chessboard->board[x][y + 1] == EDGE){ move.Set(x, y + 1, player); }
+				if (chessboard->board[x][y - 2] == EDGE){ move.Set(x, y - 1, player); }
+				chessboard->GameMove(move, show_msg);	//capture the last edge of a dead box. 
+				return true;
+			}
 		}
 	}
-	return false;
+	return false;	//return false if there is no dead box
+}
+void MctsSearch::CaptureAllDeadBox(bool show_msg)
+{
+	//capture all dead box in this chessboard.
+	//repetitive execution untile no dead box exists;
+	for (; CaptureDeadBox(show_msg););
 }
 
 

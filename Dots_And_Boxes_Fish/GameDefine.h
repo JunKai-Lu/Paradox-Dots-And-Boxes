@@ -102,7 +102,7 @@ it is a base class.
 class ChessBoard
 {
 friend class ChessBoardSolver;
-
+friend class MctsSearch;
 protected:
 	//data
 	ChessBoardArray board;//this array express an standard chess board.
@@ -119,17 +119,9 @@ public:
 	void SetChessBoard(ChessBoardArray &source);			//set the value chess board array through copy from &source.
 	sint Winner();											//return a winner by normal game rule
 	void PrintCB();											//print the chessboard
-	inline int GetBoxLiberties(sint x, sint y)
-	{
-		int edge = 0;
-		if (board[x + 1][y] == EDGE){ edge++; }
-		if (board[x - 1][y] == EDGE){ edge++; }
-		if (board[x][y + 1] == EDGE){ edge++; }
-		if (board[x][y - 1] == EDGE){ edge++; }
-		return edge;
-	}
 
 protected:
+	
 	inline int GetPlayerBoxes(sint player)
 	{
 		int b = 0;
@@ -180,12 +172,12 @@ void CprintfNum(int num, int color);
 bool EqualLoc(Loc &a, Loc &b);
 bool EqualChessBoard(ChessBoardArray &a, ChessBoardArray &b);
 
-Loc NewLoc(sint &x, sint &y);
-Loc NewLoc(int &x, int &y);
-Move NewMove(sint &x, sint &y, sint &p);
-Move NewMove(int &x, int &y, int &p);
-bool OddNum(sint &num);
-bool OddNum(int &num);
-bool EvenNum(sint &num);
-bool EvenNum(int &num);
+Loc NewLoc(sint x, sint y);
+Loc NewLoc(int x, int y);
+Move NewMove(sint x, sint y, sint p);
+Move NewMove(int x, int y, int p);
+bool OddNum(sint num);
+bool OddNum(int num);
+bool EvenNum(sint num);
+bool EvenNum(int num);
 

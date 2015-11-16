@@ -9,7 +9,19 @@
 
 using namespace std;
 
-//function
+//public interface
+ChessBoardSolver::ChessBoardSolver(ChessBoard &cb, sint next_player)
+{
+	chessboard = &cb;
+	first_player = next_player;
+}
+sint ChessBoardSolver::CalculateWinner()
+{
+	return 0;
+}
+
+//private function
+
 void ChessBoardSolver::RefreshBoxesInfo()
 {
 	//x = bx*2+1  y = by*2+1
@@ -22,7 +34,7 @@ void ChessBoardSolver::RefreshBoxesInfo()
 			sint y = (by * 2) + 1;					//the actual adress
 			
 			//define the box type
-			int bl = sample->GetBoxLiberties(x, y);	//obtain the liberties of the boxes
+			int bl = chessboard->GetBoxLiberties(x, y);	//obtain the liberties of the boxes
 			if (bl >= 3)
 				boxes[bx][by].type = FREE_BOX;
 			else if (bl == 1)
@@ -36,9 +48,10 @@ void ChessBoardSolver::RefreshBoxesInfo()
 	}
 }
 
-//test
+//test function
 void ChessBoardSolver::ShowBoxType()
 {
+	RefreshBoxesInfo();
 	for (int j = 0; j < BOXLEN; j++)
 	{
 		for (int i = 1; i < BOXLEN; i++)
@@ -60,8 +73,3 @@ void ChessBoardSolver::ShowBoxType()
 	Cprintf("\n¡ö [Full Box]\n", 8);
 }
 
-//interface
-sint ChessBoardSolver::CalculateWinner()
-{
-	return 0;
-}

@@ -247,24 +247,24 @@ bool EqualChessBoardArray(ChessBoardArray &a, ChessBoardArray &b)
 				return false;
 	return true;
 }
-Loc NewLoc(sint &x, sint &y)
+Loc NewLoc(sint x, sint y)
 {
 	Loc l(x, y);
 	return l;
 }
-Loc NewLoc(int &x, int &y)
+Loc NewLoc(int x, int y)
 {
 	sint lx = (sint)x;
 	sint ly = (sint)y;
 	Loc l(lx, ly);
 	return l;
 }
-Move NewMove(sint &x, sint &y, sint &p)
+Move NewMove(sint x, sint y, sint p)
 {
 	Move m(x, y, p);
 	return m;
 }
-Move NewMove(int &x, int &y, int &p)
+Move NewMove(int x, int y, int p)
 {
 	sint sx = x;
 	sint sy = y;
@@ -272,21 +272,21 @@ Move NewMove(int &x, int &y, int &p)
 	Move m(sx, sy, sp);
 	return m;
 }
-bool OddNum(sint &num)
+bool OddNum(sint num)
 {
 	//return 'true' if the num is an odd number.
 	if (num % 2 != 0)
 		return true;
 	return false;
 }
-bool OddNum(int &num)
+bool OddNum(int num)
 {
 	//return 'true' if the num is an odd number.
 	if (num % 2 != 0)
 		return true;
 	return false;
 }
-bool EvenNum(sint &num)
+bool EvenNum(sint num)
 {
 	//return 'true' if the num is an even number or zero.
 	//notice: we define zero as an even number.
@@ -294,7 +294,7 @@ bool EvenNum(sint &num)
 		return true;
 	return false;
 }
-bool EvenNum(int &num)
+bool EvenNum(int num)
 {
 	//return 'true' if the num is an even number or zero.
 	//notice: we define zero as an even number.

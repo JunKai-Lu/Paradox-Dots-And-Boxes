@@ -138,3 +138,27 @@ private:
 
 bool CaptureDeadBox(sint player);
 void CaptureAllDeadBox(sint player);
+
+
+
+//class 'MctsSearch' is the major searching algorithm in this engine.
+//when the object is created, a new root node would be created according to the chessboard.
+
+
+class MctsSearch
+{
+public:
+	MctsSearch(ChessBoard &cb, sint p);		//constructed function
+	void MctsMove();						//execute search algorithm
+
+private:
+	//data member
+	ChessBoard *chessboard;					//source chessboard
+	MctsNode *root_node;					//the root node of the search tree.
+	sint player;							//the player who is preparing for next move.
+
+
+	//function
+	bool CaptureDeadBox(bool show_msg);		//capture a dead box, return false if there is no any dead box.
+	void CaptureAllDeadBox(bool show_msg);	//capture all dead box in this chessboard.
+};
