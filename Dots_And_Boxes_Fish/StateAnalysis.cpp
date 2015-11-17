@@ -73,3 +73,24 @@ void ChessBoardSolver::ShowBoxType()
 	Cprintf("\n■ [Full Box]\n", 8);
 }
 
+/*void BoxBoard::SearchingFromBox(LOC BoxLoc)
+{
+	int Dir[4][2] = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
+	for (int n = 0; n < 4; n++)
+	{
+		int bx = BoxLoc.x + Dir[n][0];
+		int by = BoxLoc.y + Dir[n][1];
+		int lx = (BoxLoc.x * 2) - 1 + Dir[n][0];
+		int ly = (BoxLoc.y * 2) - 1 + Dir[n][1];
+		if (board[lx][ly] == EDGE&&GetBoxType(bx, by) == CHAINBOX)//邻边为空，目标格子为链格
+		{
+			if (Boxes[bx][by].BelongingChainNum == EMPTY)//必须为未归属的格子，避免环重复从不同方向出发。
+			{
+				LOC NewLoc;
+				NewLoc.Set(bx, by);
+				RegisterChain(BoxLoc, NewLoc);
+			}
+		}
+	}
+
+}*/
