@@ -25,6 +25,12 @@ enum ChessBoardType
 	DOT = 0, RED = 1, BLUE = -1, RED_BOX = 2, BLUE_BOX = -2, EDGE = 10, BOX = 20
 };
 
+//we define the types of box as follow:
+enum BoxType
+{
+	FULL_BOX = 0, DEAD_BOX = 1, CHAIN_BOX = 2, FREE_BOX = 3
+};
+
 //'char' is redefined as 'sint' for easier substitution. 
 //'char' instead of 'int' in order to save memory.
 
@@ -34,6 +40,7 @@ using ChessBoardArray = sint[LEN][LEN];
 
 //debug model
 #define DEBUG true
+
 
 
 //CLASS DEFINITION
@@ -111,14 +118,15 @@ public:
 	
 
 	//function
-	ChessBoard();											//constructed function
-	ChessBoard(ChessBoard &chessboard);						//constructed function
-	ChessBoard(ChessBoard &chessboard, Move &move);			//constructed function
-	void GameMove(Move &Move, bool show_msg);				//the basic function of this game. only through it can u change the chessboard.
-	void GameMoveMsg(Move &m);								//sent a move message
-	void SetChessBoard(ChessBoardArray &source);			//set the value chess board array through copy from &source.
-	sint Winner();											//return a winner by normal game rule
-	void PrintCB();											//print the chessboard
+	ChessBoard();												//constructed function
+	//ChessBoard(const ChessBoard &c);							//constructed function
+	ChessBoard(ChessBoard &chessboard);							//constructed function
+	ChessBoard(ChessBoard &chessboard, Move &move);				//constructed function
+	void GameMove(Move &Move, bool show_msg);					//the basic function of this game. only through it can u change the chessboard.
+	void GameMoveMsg(Move &m);									//sent a move message
+	void SetChessBoard(ChessBoardArray &source);				//set the value chess board array through copy from &source.
+	sint Winner();												//return a winner by normal game rule
+	void PrintCB();												//print the chessboard
 
 protected:
 	
@@ -156,7 +164,11 @@ protected:
 		return 0;
 	}
 
-	
+protected:
+	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);		//get whether a box belong to a dead chain
+	sint GetMovesWithBias(Move moves[MOVENUM], sint player);		//a different function which would save all possible moves to a move array
+	bool CaptureDeadBox(sint player, bool show_msg);				//capture a dead box, return false if there is no any dead box.
+	void CaptureAllDeadBox(sint player, bool show_msg);				//capture all dead box in this chessboard.
 };
 
 

@@ -127,18 +127,16 @@ private:
 	*/
 private:
 	sint GetMovesWithBias();									//computing all possible moves with searching bias
-	sint GetMovesWithBias(Move moves[MOVENUM], sint player);	//a different function which would save all possible moves to a move array
 	bool AnyBoxBelongToDeadChain();
-	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);	
 	
 	sint GetStateWinner(sint next_player);
 	
 	
 };
 
-bool CaptureDeadBox(sint player);
-void CaptureAllDeadBox(sint player);
 
+sint RandomMove(ChessBoard &source, sint player, bool show_msg);			//take a random move(untile finish)
+sint SingleSimulation(const ChessBoard &source, sint first_player);			//excute simulation and return a winner.
 
 
 //class 'MctsSearch' is the major searching algorithm in this engine.
@@ -155,10 +153,9 @@ private:
 	//data member
 	ChessBoard *chessboard;					//source chessboard
 	MctsNode *root_node;					//the root node of the search tree.
-	sint player;							//the player who is preparing for next move.
-
 
 	//function
-	bool CaptureDeadBox(bool show_msg);		//capture a dead box, return false if there is no any dead box.
-	void CaptureAllDeadBox(bool show_msg);	//capture all dead box in this chessboard.
+
+	
+
 };

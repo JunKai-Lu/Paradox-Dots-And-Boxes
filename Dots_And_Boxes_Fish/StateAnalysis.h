@@ -11,11 +11,7 @@ enum ChainType
 	NOT_DEFINED, SINGLE_CHAIN, SHORT_CHAIN, LONG_CHAIN, PRE_LONG_CHAIN, CIRCLE, PRE_CIRCLE, DEAD_CHAIN, DEAD_CIRCLE
 };
 
-//we define the types of box as follow:
-enum BoxType
-{
-	FULL_BOX = 0, DEAD_BOX = 1, CHAIN_BOX = 2, FREE_BOX = 3
-};
+
 
 //the infomation of a box in chessboard.
 class BoxInfo

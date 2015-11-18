@@ -50,26 +50,7 @@ MctsMove::~MctsMove()//the destructor function need to delete the corresponded n
 }
 
 //this two function is used to judge if any dead chain exist
-bool MctsNode::GetBoxBelongToDeadChainBool(sint box_x, sint box_y)
-{
-	if (GetBoxLiberties(box_x, box_y) == DEAD_BOX)//首先这个格子必须本身是一个C型格
-	{
-		int Dir[4][2] = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
-		for (int n = 0; n < 4; n++)
-		{
-			int edge_x = box_x + Dir[n][0];
-			int edge_y = box_y + Dir[n][1];
-			int next_box_x = box_x + Dir[n][0] + Dir[n][0];//下一个格子的实际地址
-			int next_box_y = box_y + Dir[n][1] + Dir[n][1];
-			if (board[edge_x][edge_y] == EDGE&&next_box_x >= 1 && next_box_x <= LEN - 2 && next_box_y >= 1 && next_box_y <= LEN - 2)
-			{
-				if (GetBoxLiberties(next_box_x, next_box_y) == CHAIN_BOX)
-					return true;
-			}
-		}
-	}
-	return false;
-}
+
 bool MctsNode::AnyBoxBelongToDeadChain()
 {
 	for (int box_y = 1; box_y < LEN; box_y = box_y + 2)
@@ -98,68 +79,7 @@ bool MctsNode::AnyBoxBelongToDeadChain()
 }
 
 //this two function is used to get all possible moves
-sint MctsNode::GetMovesWithBias(Move moves[MOVENUM], sint player)
-{
-	//argument 'Moves' is an 'Move' array which can conclude all possible move. we define its size as the number of all edge.
-	//this function is mainly used to create random move.
 
-	int move_num = 0;
-	for (sint y = 0; y < LEN; y +=2)
-	{
-		for (sint x = 1; x < LEN; x +=2)
-		{
-			//in each iterator we check (x,y) and (y,x).
-			if (board[x][y] == EDGE)
-			{
-				//we assume there is no any dead box need to be capture.
-				//NOTICE: x is always odd number and x is allways even num, so the edge (x,y) is always a horizontal edge.
-				//thus we only need check box(x,y+1) and box(x,y-1).
-
-				board[x][y] = player;//assume the player capture the edge.
-
-				if (
-					(y == 0 && !GetBoxBelongToDeadChainBool(x, y + 1)) ||
-					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(x, y - 1)) ||
-					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(x, y + 1) && !GetBoxBelongToDeadChainBool(x, y - 1))
-					)
-				{
-					//if the conditions are met, the edge is an available move.
-					//save the move.
-
-					moves[move_num].Set(x, y, player);	//save the move to 'Move' array.
-					move_num++;							//increase the number of move
-				}
-
-				board[x][y] = EDGE;//recovery the chess board.
-			}
-
-
-			if (board[y][x] == EDGE)
-			{
-				//we assume there is no any dead box need to be capture.
-				//NOTICE: x is always odd number and y is allways even num, so the edge (y,x) is always a vertical edge.
-				//thus we only need check box( y+1,x ) and box(y-1,x).
-
-				board[x][y] = player;//assume this player capture the edge.
-
-				if (
-					(y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||
-					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(y - 1, x)) ||
-					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(y + 1, x) && !GetBoxBelongToDeadChainBool(y - 1, x))
-					)
-				{
-					//if the conditions are met, the edge is an available move.
-					//save the move.
-
-					moves[move_num].Set(x, y, player);	//save the move to 'Move' array.
-					move_num++;							//increase the number of move
-				}
-				board[x][y] = EDGE;		//recovery the chess board.
-			}
-		}
-	}
-	return move_num;
-}
 sint MctsNode::GetMovesWithBias()
 {
 	int move_num = 0;
@@ -234,39 +154,47 @@ sint MctsNode::GetMovesWithBias()
 MctsSearch::MctsSearch(ChessBoard &cb, sint p)
 {
 	chessboard = &cb;					//the source chessboard.
-	player = p;							//set player who is preparing for next move.
 	root_node = new MctsNode(cb, p);	//create the root node according to the source chessboard.
 }
 
 //private function
-bool MctsSearch::CaptureDeadBox(bool show_msg)
+
+
+/*
+sint MctsSearch::RandomMove(ChessBoard &source, sint player, bool show_msg)
 {
-	for (sint y = 1; y < LEN-1; y += 2)
+	CaptureAllDeadBox(player,show_msg);		//capture all dead boxes at first(if there is)
+
+	Move moves[MOVENUM];
+	int move_num = source.GetMovesWithBias(moves, player);
+	int random = rand() % move_num;		//get a random number below move_num
+	if (DEBUG)//just for debug
 	{
-		for (sint x = 1; x < LEN - 1; x += 2)
+		if (move_num == 0)
 		{
-			if (chessboard->GetBoxLiberties(x,y)==DEAD_BOX)
-			{
-				Move move;
-				if (chessboard->board[x + 1][y] == EDGE){ move.Set(x + 1, y, player); }
-				if (chessboard->board[x - 1][y] == EDGE){ move.Set(x - 1, y, player); }
-				if (chessboard->board[x][y + 1] == EDGE){ move.Set(x, y + 1, player); }
-				if (chessboard->board[x][y - 2] == EDGE){ move.Set(x, y - 1, player); }
-				chessboard->GameMove(move, show_msg);	//capture the last edge of a dead box. 
-				return true;
-			}
+			cout << "WARNING: the number of moves is 0" << endl<<endl;
+			source.PrintCB();
+			system("pause");
 		}
 	}
-	return false;	//return false if there is no dead box
+
+	
+
+
+
 }
-void MctsSearch::CaptureAllDeadBox(bool show_msg)
+sint MctsSearch::SingleSimulation(const ChessBoard &source, sint first_player)
 {
-	//capture all dead box in this chessboard.
-	//repetitive execution untile no dead box exists;
-	for (; CaptureDeadBox(show_msg););
+	ChessBoard chessboard = source;//copy
+	sint player = first_player;
+	sint winner = chessboard.Winner();
+	for (; winner != 0;)
+	{
+		
+		
+	}
 }
-
-
+*/
 
 
 //in dots-and-boxes, we only conside some reasonable moves but not all moves.
