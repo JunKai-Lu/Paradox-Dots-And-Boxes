@@ -60,9 +60,9 @@ class MctsNode:public ChessBoard
 	//initilize 'avg_value' to 0 because the average value of this node is unknown.
 
 public:
-	MctsNode();															//constructed function
-	MctsNode(ChessBoard &chessboard, sint node_owner);					//constructed function
-	MctsNode(ChessBoard &chessboard, Move &next_move, sint node_owner);	//constructed function
+	MctsNode();													//constructed function
+	MctsNode(ChessBoard &cb, sint node_owner);					//constructed function
+	MctsNode(ChessBoard &cb, Move &next_move, sint node_owner);	//constructed function
 
 	sint owner;						//the player who is preparing to take next move. we define he is the owner of this node.
 	sint node_winner;				//if the game do not finish , the value is 0.
@@ -75,7 +75,8 @@ private:
 	sint existed_child_node_num;	//the number of thoes child node have been created)
 	
 	//class function
-	
+public:
+	sint SingleSimulation();		//excute simulation from current chessboard and return a winner.
 	
 
 	//compute UCB value for this node when selection.
@@ -135,8 +136,7 @@ private:
 };
 
 
-sint RandomMove(ChessBoard &source, sint player, bool show_msg);			//take a random move(untile finish)
-sint SingleSimulation(const ChessBoard &source, sint first_player);			//excute simulation and return a winner.
+
 
 
 //class 'MctsSearch' is the major searching algorithm in this engine.
@@ -155,7 +155,8 @@ private:
 	MctsNode *root_node;					//the root node of the search tree.
 
 	//function
-
+public:
+	
 	
 
 };

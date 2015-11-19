@@ -20,7 +20,7 @@ MctsNode::MctsNode() :ChessBoard()
 	total_child_node_num = 0;
 	existed_child_node_num = 0;
 }
-MctsNode::MctsNode(ChessBoard &chessboard, sint node_owner) :ChessBoard(chessboard)
+MctsNode::MctsNode(ChessBoard &cb, sint node_owner) :ChessBoard(cb.board)
 {
 	owner = node_owner;							//initilize the 'owner' equal to the 'node_owner'
 	node_winner = Winner();						//that should change to GetStateWinner() but the func is still uncomplete.
@@ -30,7 +30,7 @@ MctsNode::MctsNode(ChessBoard &chessboard, sint node_owner) :ChessBoard(chessboa
 	avg_value = 0;								//initilize to 0
 	//
 }
-MctsNode::MctsNode(ChessBoard &chessboard, Move &next_move, sint node_owner) :ChessBoard(chessboard, next_move)
+MctsNode::MctsNode(ChessBoard &cb, Move &next_move, sint node_owner) :ChessBoard(cb.board, next_move)
 {
 	owner = node_owner;							//initilize the 'owner' equal to the 'node_owner'
 	node_winner = Winner();						//that should change to GetStateWinner() but the func is still uncomplete.
@@ -122,7 +122,7 @@ sint MctsNode::GetMovesWithBias()
 				//NOTICE: x is always odd number and y is allways even num, so the edge (y,x) is always a vertical edge.
 				//thus we only need check box( y+1,x ) and box(y-1,x).
 
-				board[x][y] = owner;//assume this player capture the edge.
+				board[y][x] = owner;//assume this player capture the edge.
 
 				if (
 					(y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||
@@ -133,11 +133,11 @@ sint MctsNode::GetMovesWithBias()
 					//if the conditions are met, the edge is an available move.
 					//save the move.
 
-					move->Set(x, y, owner, new MctsMove, nullptr);	//save the move to move linked list.
+					move->Set(y, x, owner, new MctsMove, nullptr);	//save the move to move linked list.
 					move = move->next_move;							//next empty move.
 					move_num++;										//increase the number of move
 				}
-				board[x][y] = EDGE;		//recovery the chess board.
+				board[y][x] = EDGE;		//recovery the chess board.
 			}
 		}
 	}
@@ -158,43 +158,21 @@ MctsSearch::MctsSearch(ChessBoard &cb, sint p)
 }
 
 //private function
-
-
-/*
-sint MctsSearch::RandomMove(ChessBoard &source, sint player, bool show_msg)
+sint MctsNode::SingleSimulation()
 {
-	CaptureAllDeadBox(player,show_msg);		//capture all dead boxes at first(if there is)
-
-	Move moves[MOVENUM];
-	int move_num = source.GetMovesWithBias(moves, player);
-	int random = rand() % move_num;		//get a random number below move_num
-	if (DEBUG)//just for debug
+	ChessBoard chessboard = *this;	//copy chessboard
+	sint player = owner;
+	sint winner = chessboard.ComputeWinner(player);
+	for (; winner == 0;)
 	{
-		if (move_num == 0)
-		{
-			cout << "WARNING: the number of moves is 0" << endl<<endl;
-			source.PrintCB();
-			system("pause");
-		}
+		chessboard.RandomMoveWithBias(player, false);
+		player = -player;//change player
+		winner = chessboard.ComputeWinner(player);
+		chessboard.PrintCB();
+		system("pause");
 	}
-
-	
-
-
-
+	return winner;
 }
-sint MctsSearch::SingleSimulation(const ChessBoard &source, sint first_player)
-{
-	ChessBoard chessboard = source;//copy
-	sint player = first_player;
-	sint winner = chessboard.Winner();
-	for (; winner != 0;)
-	{
-		
-		
-	}
-}
-*/
 
 
 //in dots-and-boxes, we only conside some reasonable moves but not all moves.

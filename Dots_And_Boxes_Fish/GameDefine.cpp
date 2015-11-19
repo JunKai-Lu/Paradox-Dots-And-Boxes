@@ -21,14 +21,14 @@ ChessBoard::ChessBoard()
 		}
 	}
 }
-ChessBoard::ChessBoard(ChessBoard &chessboard)
+ChessBoard::ChessBoard(ChessBoardArray &cb_array)
 {
-	SetChessBoard(chessboard.board);
+	SetChessBoard(cb_array);
 }
-ChessBoard::ChessBoard(ChessBoard &chessboard, Move &move)
+ChessBoard::ChessBoard(ChessBoardArray &cb_array, Move &move)
 {
 	//copy the chessboard first then make one move in order to create a new state.
-	SetChessBoard(chessboard.board);
+	SetChessBoard(cb_array);
 	GameMove(move, false);
 }
 void ChessBoard::GameMove(Move &move, bool show_msg)
@@ -102,7 +102,7 @@ void ChessBoard::SetChessBoard(ChessBoardArray &source)
 		for (int j = 0; j < LEN; j++)
 			board[i][j] = source[i][j];
 }
-sint ChessBoard::Winner()
+sint ChessBoard::Winner() const
 {
 	int red = 0;
 	int blue = 0;
@@ -125,7 +125,21 @@ sint ChessBoard::Winner()
 	}
 	return 0;
 }
-void ChessBoard::PrintCB()
+sint ChessBoard::ComputeWinner(sint next_player)
+{
+	if (ExistMoveWithBoas() == false)
+	{
+		//the outcome of this game is already doomed.
+		
+		//here we need to invoke GameSolver.
+		if (Winner() != 0)
+			return Winner();
+		return RED;
+		//
+	}
+	return 0;//the outcome of this game is still unpredictable.
+}
+void ChessBoard::PrintCB() const
 {
 	//Print Chess ChessBoardArray
 	cout << "  ";
@@ -202,8 +216,8 @@ void ChessBoard::PrintCB()
 	cout << "\n";
 }
 
-//
-bool ChessBoard::GetBoxBelongToDeadChainBool(sint box_x, sint box_y)
+//Advanced function for move
+bool ChessBoard::GetBoxBelongToDeadChainBool(sint box_x, sint box_y) const
 {
 	if (GetBoxLiberties(box_x, box_y) == DEAD_BOX)//this box shold be C type box at first
 	{
@@ -265,7 +279,7 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 				//NOTICE: x is always odd number and y is allways even num, so the edge (y,x) is always a vertical edge.
 				//thus we only need check box( y+1,x ) and box(y-1,x).
 
-				board[x][y] = player;//assume this player capture the edge.
+				board[y][x] = player;//assume this player capture the edge.
 
 				if (
 					(y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||
@@ -276,14 +290,41 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 					//if the conditions are met, the edge is an available move.
 					//save the move.
 
-					moves[move_num].Set(x, y, player);	//save the move to 'Move' array.
+					moves[move_num].Set(y, x, player);	//save the move to 'Move' array.
 					move_num++;							//increase the number of move
 				}
-				board[x][y] = EDGE;		//recovery the chess board.
+				board[y][x] = EDGE;		//recovery the chess board.
 			}
 		}
 	}
 	return move_num;
+}
+bool ChessBoard::ExistMoveWithBoas()
+{
+
+	for (sint y = 0; y < LEN; y += 2)
+	{
+		for (sint x = 1; x < LEN; x += 2)
+		{
+			if (board[x][y] == EDGE)
+			{
+				board[x][y] = RED;
+				if ((y == 0 && !GetBoxBelongToDeadChainBool(x, y + 1)) ||(y == LEN - 1 && !GetBoxBelongToDeadChainBool(x, y - 1)) ||(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(x, y + 1) && !GetBoxBelongToDeadChainBool(x, y - 1)))
+					return true;
+				board[x][y] = EDGE;
+			}
+
+
+			if (board[y][x] == EDGE)
+			{
+				board[y][x] = RED;
+				if ((y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||(y == LEN - 1 && !GetBoxBelongToDeadChainBool(y - 1, x)) ||(y > 0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(y + 1, x) && !GetBoxBelongToDeadChainBool(y - 1, x)))
+					return true;
+				board[y][x] = EDGE;	
+			}
+		}
+	}
+	return false;
 }
 bool ChessBoard::CaptureDeadBox(sint player, bool show_msg)
 {
@@ -311,6 +352,26 @@ void ChessBoard::CaptureAllDeadBox(sint player, bool show_msg)
 	//repetitive execution untile no dead box exists;
 	for (; CaptureDeadBox(player,show_msg););
 }
+void ChessBoard::RandomMoveWithBias(sint player, bool show_msg)
+{
+	CaptureAllDeadBox(player, show_msg);//capture all dead boxes at first(if there is)
+	Move moves[MOVENUM];
+	int move_num = GetMovesWithBias(moves, player);
+	int random = rand() % move_num;	//get a random number below move_num
+	if (DEBUG)//just for debug
+	{
+		if (move_num == 0)
+		{
+			cout << "WARNING: the number of moves is 0" << endl << endl;
+			PrintCB();
+			system("pause");
+		}
+	}
+	GameMove(moves[random], show_msg);//excute random move
+}
+
+
+
 //some function
 
 void Cprintf(char* str, WORD color, ...) 

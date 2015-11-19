@@ -34,7 +34,7 @@ enum BoxType
 //'char' is redefined as 'sint' for easier substitution. 
 //'char' instead of 'int' in order to save memory.
 
-typedef char sint;
+typedef short sint;
 using ChessBoardArray = sint[LEN][LEN];
 
 
@@ -110,27 +110,33 @@ class ChessBoard
 {
 friend class ChessBoardSolver;
 friend class MctsSearch;
+friend class MctsNode;
 protected:
 	//data
 	ChessBoardArray board;//this array express an standard chess board.
 
 public:
-	
-
-	//function
 	ChessBoard();												//constructed function
-	//ChessBoard(const ChessBoard &c);							//constructed function
-	ChessBoard(ChessBoard &chessboard);							//constructed function
-	ChessBoard(ChessBoard &chessboard, Move &move);				//constructed function
+	ChessBoard(ChessBoardArray &chessboard);					//constructed function
+	ChessBoard(ChessBoardArray &chessboard, Move &move);		//constructed function
 	void GameMove(Move &Move, bool show_msg);					//the basic function of this game. only through it can u change the chessboard.
 	void GameMoveMsg(Move &m);									//sent a move message
 	void SetChessBoard(ChessBoardArray &source);				//set the value chess board array through copy from &source.
-	sint Winner();												//return a winner by normal game rule
-	void PrintCB();												//print the chessboard
+	sint Winner() const;										//return a winner by normal game rule
+	sint ComputeWinner(sint next_player);						//compute the winner of current state by analysis the situation.
+	void PrintCB() const;										//print the chessboard
+
+public:
+	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y)const;	//get whether a box belong to a dead chain
+	sint GetMovesWithBias(Move moves[MOVENUM], sint player);		//a different function which would save all possible moves to a move array
+	bool ExistMoveWithBoas();										//check if any bias move exist.
+	bool CaptureDeadBox(sint player, bool show_msg);				//capture a dead box, return false if there is no any dead box.
+	void CaptureAllDeadBox(sint player, bool show_msg);				//capture all dead box in this chessboard.
+	void RandomMoveWithBias(sint player, bool show_msg);			//take a random move(untile finish)
 
 protected:
 	
-	inline int GetPlayerBoxes(sint player)
+	inline int GetPlayerBoxes(sint player) const
 	{
 		int b = 0;
 		sint box = player * 2;
@@ -140,7 +146,7 @@ protected:
 					b++;
 		return b;
 	}
-	inline int GetBoxLiberties(sint x, sint y)
+	inline int GetBoxLiberties(sint x, sint y) const
 	{
 		int edge = 0;
 		if (board[x + 1][y] == EDGE){ edge++; }
@@ -149,7 +155,7 @@ protected:
 		if (board[x][y - 1] == EDGE){ edge++; }
 		return edge;
 	}
-	inline bool GetBoxCompleted(sint x, sint y)
+	inline bool GetBoxCompleted(sint x, sint y) const
 	{
 		if (board[x + 1][y] == EDGE){ return false; }
 		if (board[x - 1][y] == EDGE){ return false; }
@@ -157,18 +163,14 @@ protected:
 		if (board[x][y - 1] == EDGE){ return false; }
 		return true;
 	}
-	inline sint GetBoxOwner(sint x, sint y)
+	inline sint GetBoxOwner(sint x, sint y) const
 	{
 		if (board[x][y] == RED_BOX){ return RED; }
 		if (board[x][y] == BLUE_BOX){ return BLUE; }
 		return 0;
 	}
 
-protected:
-	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y);		//get whether a box belong to a dead chain
-	sint GetMovesWithBias(Move moves[MOVENUM], sint player);		//a different function which would save all possible moves to a move array
-	bool CaptureDeadBox(sint player, bool show_msg);				//capture a dead box, return false if there is no any dead box.
-	void CaptureAllDeadBox(sint player, bool show_msg);				//capture all dead box in this chessboard.
+
 };
 
 

@@ -222,7 +222,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 
 	//Test
-	
+	Move a;
+	a.Set(0, 1, RED);
+	CB.GameMove(a, false);
+	a.Set(1, 0, RED);
+	CB.GameMove(a, false);
+	a.Set(1, 2, RED);
+	CB.GameMove(a, false);
+
+	MctsNode HH(CB, RED);
+	HH.SingleSimulation();
 	
 	//Choose Model
 	int model;
