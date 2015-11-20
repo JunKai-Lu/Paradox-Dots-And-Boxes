@@ -127,12 +127,14 @@ public:
 	void PrintCB() const;										//print the chessboard
 
 public:
-	bool GetBoxBelongToDeadChainBool(sint box_x, sint box_y)const;	//get whether a box belong to a dead chain
-	sint GetMovesWithBias(Move moves[MOVENUM], sint player);		//a different function which would save all possible moves to a move array
+	bool EdgeCauseDeadChain(sint x, sint y, sint box_x, sint box_y) const;
+	sint GetMovesWithBias(Move moves[MOVENUM], sint player)const;
 	bool ExistMoveWithBoas();										//check if any bias move exist.
 	bool CaptureDeadBox(sint player, bool show_msg);				//capture a dead box, return false if there is no any dead box.
 	void CaptureAllDeadBox(sint player, bool show_msg);				//capture all dead box in this chessboard.
-	void RandomMoveWithBias(sint player, bool show_msg);			//take a random move(untile finish)
+	sint RandomMoveWithBias(sint player, bool show_msg);			//take a random move(untile finish) and return the next player.
+
+
 
 protected:
 	

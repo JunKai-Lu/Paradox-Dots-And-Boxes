@@ -188,7 +188,7 @@ void Model_Define_Chain()
 void Info()
 {
 	Cprintf("[Paradox Fish Dots-and-Boxes Engine]\n\n", 14);
-	Cprintf("		Version:1.0.1. \n\n", 11);
+	Cprintf("		Version:2.0.2. \n\n", 11);
 	Cprintf("[  0  ]	Default Game Model \n[  1  ]	Agorithm Testing\n[  2  ]	Testing Model\n[  3  ]	Winner Testing\n[other]	Define Game\n\n", 10);
 	Cprintf("Less Memory, More Effective\n\n", 8);
 }
@@ -201,38 +201,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	Info();							//Show Game Infomation
 	ChessBoard CB;					//Create a new chess board;
 
-	/*Time Test
+	//Time Test
+	/*
 	start = clock();
-
-	MctsNode HH(CB, RED);
-	int n = 0;
-	for (int i = 0; i < 300000; i++)
-	{
-		if (HH.GetMovesWithBias() == 60)
-			n++;
-	}
 	
 	
 
 	finish = clock();
 	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
 	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
-	
 	*/
-	
 
-	//Test
-	Move a;
-	a.Set(0, 1, RED);
-	CB.GameMove(a, false);
-	a.Set(1, 0, RED);
-	CB.GameMove(a, false);
-	a.Set(1, 2, RED);
-	CB.GameMove(a, false);
-
-	MctsNode HH(CB, RED);
-	HH.SingleSimulation();
-	
 	//Choose Model
 	int model;
 	cin >> model;

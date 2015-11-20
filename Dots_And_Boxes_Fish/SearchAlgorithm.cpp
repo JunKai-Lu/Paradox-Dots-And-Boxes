@@ -95,13 +95,10 @@ sint MctsNode::GetMovesWithBias()
 				//we assume there is no any dead box need to be capture.
 				//NOTICE: x is always odd number and x is allways even num, so the edge (x,y) is always a horizontal edge.
 				//thus we only need check box(x,y+1) and box(x,y-1).
-
-				board[x][y] = owner;//assume this player capture the edge.
-
 				if (
-					(y == 0 && !GetBoxBelongToDeadChainBool(x, y + 1)) ||
-					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(x, y - 1)) ||
-					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(x, y + 1) && !GetBoxBelongToDeadChainBool(x, y - 1))
+					(y == 0 && !EdgeCauseDeadChain(x, y, x, y + 1)) ||
+					(y == LEN - 1 && !EdgeCauseDeadChain(x, y, x, y - 1)) ||
+					(y>0 && y < LEN - 1 && !EdgeCauseDeadChain(x, y, x, y + 1) && !EdgeCauseDeadChain(x, y, x, y - 1))
 					)
 				{
 					//if the conditions are met, the edge is an available move.
@@ -111,8 +108,6 @@ sint MctsNode::GetMovesWithBias()
 					move = move->next_move;							//next empty move.
 					move_num++;										//increase the number of move
 				}
-
-				board[x][y] = EDGE;//recovery the chess board.
 			}
 
 
@@ -121,13 +116,10 @@ sint MctsNode::GetMovesWithBias()
 				//we assume there is no any dead box need to be capture.
 				//NOTICE: x is always odd number and y is allways even num, so the edge (y,x) is always a vertical edge.
 				//thus we only need check box( y+1,x ) and box(y-1,x).
-
-				board[y][x] = owner;//assume this player capture the edge.
-
 				if (
-					(y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||
-					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(y - 1, x)) ||
-					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(y + 1, x) && !GetBoxBelongToDeadChainBool(y - 1, x))
+					(y == 0 && !EdgeCauseDeadChain(y, x, y + 1, x)) ||
+					(y == LEN - 1 && !EdgeCauseDeadChain(y, x, y - 1, x)) ||
+					(y>0 && y < LEN - 1 && !EdgeCauseDeadChain(y, x, y + 1, x) && !EdgeCauseDeadChain(y, x, y - 1, x))
 					)
 				{
 					//if the conditions are met, the edge is an available move.
@@ -137,7 +129,6 @@ sint MctsNode::GetMovesWithBias()
 					move = move->next_move;							//next empty move.
 					move_num++;										//increase the number of move
 				}
-				board[y][x] = EDGE;		//recovery the chess board.
 			}
 		}
 	}
@@ -165,11 +156,8 @@ sint MctsNode::SingleSimulation()
 	sint winner = chessboard.ComputeWinner(player);
 	for (; winner == 0;)
 	{
-		chessboard.RandomMoveWithBias(player, false);
-		player = -player;//change player
+		player = chessboard.RandomMoveWithBias(player, false);
 		winner = chessboard.ComputeWinner(player);
-		chessboard.PrintCB();
-		system("pause");
 	}
 	return winner;
 }

@@ -217,9 +217,10 @@ void ChessBoard::PrintCB() const
 }
 
 //Advanced function for move
-bool ChessBoard::GetBoxBelongToDeadChainBool(sint box_x, sint box_y) const
+
+bool ChessBoard::EdgeCauseDeadChain(sint x,sint y,sint box_x, sint box_y) const
 {
-	if (GetBoxLiberties(box_x, box_y) == DEAD_BOX)//this box shold be C type box at first
+	if (GetBoxLiberties(box_x, box_y) == CHAIN_BOX)//this box shold be CHAIN BOX at first
 	{
 		int Dir[4][2] = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
 		for (int n = 0; n < 4; n++)
@@ -228,19 +229,23 @@ bool ChessBoard::GetBoxBelongToDeadChainBool(sint box_x, sint box_y) const
 			int edge_y = box_y + Dir[n][1];
 			int next_box_x = box_x + Dir[n][0] + Dir[n][0];//the actual address of next box.
 			int next_box_y = box_y + Dir[n][1] + Dir[n][1];
-			if (board[edge_x][edge_y] == EDGE&&next_box_x >= 1 && next_box_x <= LEN - 2 && next_box_y >= 1 && next_box_y <= LEN - 2)
+			if (edge_x != x || edge_y != y)
 			{
-				if (GetBoxLiberties(next_box_x, next_box_y) == CHAIN_BOX)
-					return true;
+				if (board[edge_x][edge_y] == EDGE&&next_box_x >= 1 && next_box_x <= LEN - 2 && next_box_y >= 1 && next_box_y <= LEN - 2)
+				{
+					if (GetBoxLiberties(next_box_x, next_box_y) == CHAIN_BOX)
+						return true;
+				}
 			}
 		}
 	}
 	return false;
 }
-sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
+sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)const
 {
 	//argument 'Moves' is an 'Move' array which can conclude all possible move. we define its size as the number of all edge.
 	//this function is mainly used to create random move.
+	//this function is const
 
 	int move_num = 0;
 	for (sint y = 0; y < LEN; y += 2)
@@ -248,18 +253,12 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 		for (sint x = 1; x < LEN; x += 2)
 		{
 			//in each iterator we check (x,y) and (y,x).
-			if (board[x][y] == EDGE)
+			if (board[x][y] == EDGE)//that means (x,y) is an empty edge
 			{
-				//we assume there is no any dead box need to be capture.
-				//NOTICE: x is always odd number and x is allways even num, so the edge (x,y) is always a horizontal edge.
-				//thus we only need check box(x,y+1) and box(x,y-1).
-
-				board[x][y] = player;//assume the player capture the edge.
-
 				if (
-					(y == 0 && !GetBoxBelongToDeadChainBool(x, y + 1)) ||
-					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(x, y - 1)) ||
-					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(x, y + 1) && !GetBoxBelongToDeadChainBool(x, y - 1))
+					(y == 0 && !EdgeCauseDeadChain(x,y,x, y + 1)) ||
+					(y == LEN - 1 && !EdgeCauseDeadChain(x,y,x, y - 1)) ||
+					(y>0 && y < LEN - 1 && !EdgeCauseDeadChain(x,y,x, y + 1) && !EdgeCauseDeadChain(x,y,x, y - 1))
 					)
 				{
 					//if the conditions are met, the edge is an available move.
@@ -268,8 +267,6 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 					moves[move_num].Set(x, y, player);	//save the move to 'Move' array.
 					move_num++;							//increase the number of move
 				}
-
-				board[x][y] = EDGE;//recovery the chess board.
 			}
 
 
@@ -279,12 +276,10 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 				//NOTICE: x is always odd number and y is allways even num, so the edge (y,x) is always a vertical edge.
 				//thus we only need check box( y+1,x ) and box(y-1,x).
 
-				board[y][x] = player;//assume this player capture the edge.
-
 				if (
-					(y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||
-					(y == LEN - 1 && !GetBoxBelongToDeadChainBool(y - 1, x)) ||
-					(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(y + 1, x) && !GetBoxBelongToDeadChainBool(y - 1, x))
+					(y == 0 && !EdgeCauseDeadChain(y , x, y + 1, x)) ||
+					(y == LEN - 1 && !EdgeCauseDeadChain(y , x, y - 1, x)) ||
+					(y>0 && y < LEN - 1 && !EdgeCauseDeadChain(y , x, y + 1, x) && !EdgeCauseDeadChain(y , x, y - 1, x))
 					)
 				{
 					//if the conditions are met, the edge is an available move.
@@ -293,7 +288,6 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 					moves[move_num].Set(y, x, player);	//save the move to 'Move' array.
 					move_num++;							//increase the number of move
 				}
-				board[y][x] = EDGE;		//recovery the chess board.
 			}
 		}
 	}
@@ -301,26 +295,24 @@ sint ChessBoard::GetMovesWithBias(Move moves[MOVENUM], sint player)
 }
 bool ChessBoard::ExistMoveWithBoas()
 {
-
 	for (sint y = 0; y < LEN; y += 2)
 	{
 		for (sint x = 1; x < LEN; x += 2)
 		{
 			if (board[x][y] == EDGE)
 			{
-				board[x][y] = RED;
-				if ((y == 0 && !GetBoxBelongToDeadChainBool(x, y + 1)) ||(y == LEN - 1 && !GetBoxBelongToDeadChainBool(x, y - 1)) ||(y>0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(x, y + 1) && !GetBoxBelongToDeadChainBool(x, y - 1)))
+				if ((y == 0 && !EdgeCauseDeadChain(x, y, x, y + 1)) ||(y == LEN - 1 && !EdgeCauseDeadChain(x, y, x, y - 1)) ||(y>0 && y < LEN - 1 && !EdgeCauseDeadChain(x, y, x, y + 1) && !EdgeCauseDeadChain(x, y, x, y - 1)))
+				{
 					return true;
-				board[x][y] = EDGE;
+				}
 			}
-
 
 			if (board[y][x] == EDGE)
 			{
-				board[y][x] = RED;
-				if ((y == 0 && !GetBoxBelongToDeadChainBool(y + 1, x)) ||(y == LEN - 1 && !GetBoxBelongToDeadChainBool(y - 1, x)) ||(y > 0 && y < LEN - 1 && !GetBoxBelongToDeadChainBool(y + 1, x) && !GetBoxBelongToDeadChainBool(y - 1, x)))
+				if ((y == 0 && !EdgeCauseDeadChain(y, x, y + 1, x)) ||(y == LEN - 1 && !EdgeCauseDeadChain(y, x, y - 1, x)) ||(y>0 && y < LEN - 1 && !EdgeCauseDeadChain(y, x, y + 1, x) && !EdgeCauseDeadChain(y, x, y - 1, x)))
+				{
 					return true;
-				board[y][x] = EDGE;	
+				}
 			}
 		}
 	}
@@ -338,7 +330,7 @@ bool ChessBoard::CaptureDeadBox(sint player, bool show_msg)
 				if (board[x + 1][y] == EDGE){ move.Set(x + 1, y, player); }
 				if (board[x - 1][y] == EDGE){ move.Set(x - 1, y, player); }
 				if (board[x][y + 1] == EDGE){ move.Set(x, y + 1, player); }
-				if (board[x][y - 2] == EDGE){ move.Set(x, y - 1, player); }
+				if (board[x][y - 1] == EDGE){ move.Set(x, y - 1, player); }
 				GameMove(move, show_msg);	//capture the last edge of a dead box. 
 				return true;
 			}
@@ -352,22 +344,22 @@ void ChessBoard::CaptureAllDeadBox(sint player, bool show_msg)
 	//repetitive execution untile no dead box exists;
 	for (; CaptureDeadBox(player,show_msg););
 }
-void ChessBoard::RandomMoveWithBias(sint player, bool show_msg)
+sint ChessBoard::RandomMoveWithBias(sint player, bool show_msg)
 {
 	CaptureAllDeadBox(player, show_msg);//capture all dead boxes at first(if there is)
 	Move moves[MOVENUM];
 	int move_num = GetMovesWithBias(moves, player);
-	int random = rand() % move_num;	//get a random number below move_num
-	if (DEBUG)//just for debug
+	if (move_num == 0)//if there is not a reasonable move after we capture all dead box
 	{
-		if (move_num == 0)
-		{
-			cout << "WARNING: the number of moves is 0" << endl << endl;
-			PrintCB();
-			system("pause");
-		}
+		return player;//the current player.
 	}
-	GameMove(moves[random], show_msg);//excute random move
+	else
+	{
+		int random = rand() % move_num;	//get a random number below move_num
+		GameMove(moves[random], show_msg);//excute random move
+		return -player;//return another player.
+	}
+	return -player;
 }
 
 
