@@ -212,6 +212,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
 	*/
 
+
 	//Choose Model
 	int model;
 	cin >> model;

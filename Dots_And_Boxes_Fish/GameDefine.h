@@ -34,7 +34,7 @@ enum BoxType
 //'char' is redefined as 'sint' for easier substitution. 
 //'char' instead of 'int' in order to save memory.
 
-typedef short sint;
+typedef char sint;
 using ChessBoardArray = sint[LEN][LEN];
 
 
@@ -48,11 +48,9 @@ using ChessBoardArray = sint[LEN][LEN];
 //class Loc mean LocATION. which consist of x and y.
 class Loc
 {
-friend bool EqualLoc(Loc &a, Loc &b);
-protected:
+public:
 	sint x;
 	sint y;
-public:
 	Loc()
 	{
 		x = 0;
@@ -68,18 +66,14 @@ public:
 		x = lx;
 		y = ly;
 	}
-	
 };
 
 
 //class Move is and standard move which include the location and player, and a POINTER to the new board.
 class Move :public Loc
 {
-friend class ChessBoard;
-
-protected:
-	sint player = 0;
 public:
+	sint player = 0;
 	Move() :Loc()
 	{
 		player = 0;
@@ -98,7 +92,6 @@ public:
 	{
 		std::cout << "X=" << (int)x << " Y=" << (int)y << " Player=" << (int)player << std::endl;
 	}
-	
 };
 
 
@@ -108,7 +101,7 @@ it is a base class.
 */
 class ChessBoard
 {
-friend class ChessBoardSolver;
+//friend class ChessBoardSolver;
 friend class MctsSearch;
 friend class MctsNode;
 protected:
@@ -125,6 +118,7 @@ public:
 	sint Winner() const;										//return a winner by normal game rule
 	sint ComputeWinner(sint next_player);						//compute the winner of current state by analysis the situation.
 	void PrintCB() const;										//print the chessboard
+	
 
 public:
 	bool EdgeCauseDeadChain(sint x, sint y, sint box_x, sint box_y) const;
@@ -133,20 +127,25 @@ public:
 	bool CaptureDeadBox(sint player, bool show_msg);				//capture a dead box, return false if there is no any dead box.
 	void CaptureAllDeadBox(sint player, bool show_msg);				//capture all dead box in this chessboard.
 	sint RandomMoveWithBias(sint player, bool show_msg);			//take a random move(untile finish) and return the next player.
-
-
-
-protected:
-	
-	inline int GetPlayerBoxes(sint player) const
+	void BeLastSituation(sint first_player)
 	{
-		int b = 0;
-		sint box = player * 2;
-		for (int i = 0; i < LEN; i++)
-			for (int j = 0; j < LEN; j++)
-				if (board[i][j] == box)
-					b++;
-		return b;
+		sint player = first_player;
+		sint winner = ComputeWinner(player);
+		for (; winner == 0;)
+		{
+			player = RandomMoveWithBias(player, false);
+			winner = ComputeWinner(player);
+		}
+		PrintCB();
+	}
+
+public:
+	inline bool Equal(sint x, sint y, sint value)const
+	{
+		//return if the value is equal to (x,y).
+		if (board[x][y] == value)
+			return true;
+		return false;
 	}
 	inline int GetBoxLiberties(sint x, sint y) const
 	{
@@ -156,6 +155,18 @@ protected:
 		if (board[x][y + 1] == EDGE){ edge++; }
 		if (board[x][y - 1] == EDGE){ edge++; }
 		return edge;
+	}
+
+protected:
+	inline int GetPlayerBoxes(sint player) const
+	{
+		int b = 0;
+		sint box = player * 2;
+		for (int i = 0; i < LEN; i++)
+			for (int j = 0; j < LEN; j++)
+				if (board[i][j] == box)
+					b++;
+		return b;
 	}
 	inline bool GetBoxCompleted(sint x, sint y) const
 	{
@@ -171,8 +182,6 @@ protected:
 		if (board[x][y] == BLUE_BOX){ return BLUE; }
 		return 0;
 	}
-
-
 };
 
 
@@ -196,4 +205,3 @@ bool OddNum(sint num);
 bool OddNum(int num);
 bool EvenNum(sint num);
 bool EvenNum(int num);
-
