@@ -8,7 +8,7 @@
 //we define the types of chain as follow:
 enum ChainType
 {
-	NOT_DEFINED, CHAIN, OPEN_CHAIN, CIRCLE, OPEN_CIRCLE, DEAD_CHAIN, DEAD_CIRCLE
+	UNDEFINED, CHAIN, OPEN_CHAIN, CIRCLE, OPEN_CIRCLE, DEAD_CHAIN, DEAD_CIRCLE
 };
 
 
@@ -31,7 +31,7 @@ class ChainInfo
 public:
 	ChainInfo()
 	{
-		chain_type = NOT_DEFINED;
+		chain_type = UNDEFINED;
 		total_box_num = 0;
 	}
 	ChainType chain_type;
@@ -47,7 +47,7 @@ public:
 	ChessBoardSolver(ChessBoard &cb, sint next_player);
 	sint CalculateWinner();			//return the winner of this state
 
-private:
+public:
 	//data member
 	ChessBoard *chessboard;			//analytical sample
 	BoxInfo boxes[BOXLEN][BOXLEN];	//boxes infomation
@@ -55,11 +55,18 @@ private:
 	sint first_player;				//the player who is preparing to make move.
 
 	//function
-	void InheritChain(int inheritor, int ancester);	//one chain get all the box of another chain
-	void DefineBoxesInfo();							//define the infomation of all boxes 
-	void DefineChainInfo();							//define the infomation of all chains
-	int GetEmptyChainNum();							//return a number of an empty chain
-	Loc GetNextBox(Loc source,Loc dest);			//find another adjacent box of dest box but the source box.
+	void DefineBoxesInfo();									//define the infomation of all boxes 
+	void DefineChainInfo();									//define the infomation of all chains
+	Loc GetNextBox(Loc dest, Loc source);					//find another adjacent box of dest box but the source box.
+	void SearchingFromFreeBox(Loc free_box_loc);			//define chain from a undefined free box.
+	void SearchingCircle(Loc chain_box_loc);				//define circle form a undefined chain box. 
+	void RegisterChain(Loc free_box_loc, Loc first_loc);
+	void RegisterCircle(Loc start_loc, Loc first_loc);
+
+	int GetEmptyChainNum();									//return a number of an empty chain
+	BoxType GetBoxType(sint bx, sint by);					//return the type of box (bx,by). all boxes which is out of chessboard would be judged as FREE_BOX.		
+	void InheritChain(int inheritor, int ancester);			//one chain get all the box of another chain
+
 	//test
-	void ShowBoxType();
+	void ShowBoardInfo() const;
 };

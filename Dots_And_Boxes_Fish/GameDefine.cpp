@@ -82,19 +82,17 @@ void ChessBoard::GameMove(Move &move, bool show_msg)
 }
 void ChessBoard::GameMoveMsg(Move &m)
 {
-	std::cout << "===== Move Message =====" << std::endl;
 	std::cout << "Msg: ";
 	if (m.player == RED)
 		Cprintf("Red", 12);
 	else
 		Cprintf("Blue ", 9);
-	std::cout << " Captual Edge";
+	std::cout << " Capture Edge";
 	Cprintf("(", 10);
 	CprintfNum(m.x, 10);
 	Cprintf(",", 10);
 	CprintfNum(m.y, 10);
 	Cprintf(")\n", 10);
-	std::cout << "===== Move Message =====" << std::endl;
 }
 void ChessBoard::SetChessBoard(ChessBoardArray &source)
 {

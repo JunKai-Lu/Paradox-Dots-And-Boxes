@@ -136,7 +136,7 @@ public:
 			player = RandomMoveWithBias(player, false);
 			winner = ComputeWinner(player);
 		}
-		PrintCB();
+		//PrintCB();
 	}
 
 public:
