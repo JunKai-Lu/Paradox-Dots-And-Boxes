@@ -47,7 +47,7 @@ public:
 	ChessBoardSolver(ChessBoard &cb, sint next_player);
 	sint CalculateWinner();			//return the winner of this state
 
-public:
+private:
 	//data member
 	ChessBoard *chessboard;			//analytical sample
 	BoxInfo boxes[BOXLEN][BOXLEN];	//boxes infomation
@@ -60,13 +60,14 @@ public:
 	Loc GetNextBox(Loc dest, Loc source);					//find another adjacent box of dest box but the source box.
 	void SearchingFromFreeBox(Loc free_box_loc);			//define chain from a undefined free box.
 	void SearchingCircle(Loc chain_box_loc);				//define circle form a undefined chain box. 
-	void RegisterChain(Loc free_box_loc, Loc first_loc);
-	void RegisterCircle(Loc start_loc, Loc first_loc);
-
+	void RegisterChain(Loc free_box_loc, Loc first_loc);	//register a chain from a free box.
+	void RegisterCircle(Loc start_loc, Loc first_loc);		//register a circle from a chain box.
 	int GetEmptyChainNum();									//return a number of an empty chain
 	BoxType GetBoxType(sint bx, sint by);					//return the type of box (bx,by). all boxes which is out of chessboard would be judged as FREE_BOX.		
 	void InheritChain(int inheritor, int ancester);			//one chain get all the box of another chain
 
+	
+public:
 	//test
 	void ShowBoardInfo() const;
 };

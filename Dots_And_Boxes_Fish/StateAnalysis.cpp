@@ -86,6 +86,9 @@ void ChessBoardSolver::DefineChainInfo()
 		}
 	}
 
+	ShowBoardInfo();
+
+
 	//chain plus
 	for (int i = 1; i < BOXNUM; i++)
 	{
@@ -109,6 +112,8 @@ void ChessBoardSolver::DefineChainInfo()
 			}
 		}
 	}
+
+	ShowBoardInfo();
 
 	//define OPEN_CHAIN which is derived by OPEN_CIRCLE.
 	for (int y = 0; y <= BOXLEN; y++)
@@ -134,6 +139,8 @@ void ChessBoardSolver::DefineChainInfo()
 			}
 		}
 	}
+
+	ShowBoardInfo();
 
 	//if there is any free box exist, make its two longest CHAIN / OPEN_CHAIN merge then own this box. 
 	for (int y = 0; y < BOXLEN; y++)
@@ -352,11 +359,10 @@ int ChessBoardSolver::GetEmptyChainNum()
 void ChessBoardSolver::InheritChain(int inheritor, int ancester)
 {
 	//all boxes belong to ancester would be change
-	for (int j = 1; j <= BOXLEN; j++)
-		for (int i = 1; i <= BOXLEN; i++)
+	for (int j = 0; j <= BOXLEN; j++)
+		for (int i = 0; i <= BOXLEN; i++)
 			if (boxes[i][j].belonging_chain_num == ancester)
 				boxes[i][j].belonging_chain_num = inheritor;
-
 	chains[inheritor].total_box_num += chains[ancester].total_box_num;
 
 	//reset the data of ancester chain
@@ -491,8 +497,10 @@ void ChessBoardSolver::ShowBoardInfo() const
 	{
 		if (chains[i].chain_type != UNDEFINED)
 		{
-			cout << "Chain[" << i << "] BoxNum:[";
-			CprintfNum(chains[i].total_box_num, 14);
+			cout << "Chain[";
+			CprintfNum(i, 14);
+			cout<< "] BoxNum:[";
+			CprintfNum(chains[i].total_box_num, 13);
 			cout<< "] ChainType:[";
 			if (chains[i].chain_type == CHAIN)
 				Cprintf("CHAIN",2);

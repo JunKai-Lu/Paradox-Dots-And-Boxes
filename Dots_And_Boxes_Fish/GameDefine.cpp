@@ -31,7 +31,7 @@ ChessBoard::ChessBoard(ChessBoardArray &cb_array, Move &move)
 	SetChessBoard(cb_array);
 	GameMove(move, false);
 }
-void ChessBoard::GameMove(Move &move, bool show_msg)
+void ChessBoard::GameMove(Move move, bool show_msg)
 {
 	/*
 	CAUTION: if edge (x,y) and the boxes near by it have been captured, the function will change the boxes' belonger.  

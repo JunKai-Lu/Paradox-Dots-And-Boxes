@@ -112,7 +112,7 @@ public:
 	ChessBoard();												//constructed function
 	ChessBoard(ChessBoardArray &chessboard);					//constructed function
 	ChessBoard(ChessBoardArray &chessboard, Move &move);		//constructed function
-	void GameMove(Move &Move, bool show_msg);					//the basic function of this game. only through it can u change the chessboard.
+	void GameMove(Move move, bool show_msg);					//the basic function of this game. only through it can u change the chessboard.
 	void GameMoveMsg(Move &m);									//sent a move message
 	void SetChessBoard(ChessBoardArray &source);				//set the value chess board array through copy from &source.
 	sint Winner() const;										//return a winner by normal game rule
