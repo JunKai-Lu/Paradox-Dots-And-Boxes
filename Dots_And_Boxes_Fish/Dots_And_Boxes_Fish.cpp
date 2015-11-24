@@ -210,7 +210,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	finish = clock();
 	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
 	cout << "\nThis Turn cost [" << totaltime << "] Seconds!" << endl;
-	*/
+	
 	
 	CB.GameMove(NewMove(0, 1, RED), false);
 	CB.GameMove(NewMove(2, 1, RED), false);
@@ -248,6 +248,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	ChessBoardSolver HH(CB,RED);
 	HH.DefineChainInfo();
 	HH.ShowBoardInfo();
+	*/
+
 
 	//Choose Model
 	int model;

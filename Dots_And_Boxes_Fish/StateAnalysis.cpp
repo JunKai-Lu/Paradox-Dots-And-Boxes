@@ -17,8 +17,42 @@ ChessBoardSolver::ChessBoardSolver(ChessBoard &cb, sint next_player)
 }
 sint ChessBoardSolver::CalculateWinner()
 {
+	DefineChainInfo();
+
+	//count the number of each chain.
+	int chain_num = 0;
+	int open_chain_num = 0;
+	int circle_num = 0;
+	int open_circle_num = 0;
+	int chain_boxes = 0;
+	int open_chain_boxes = 0;
+	int circle_boxes = 0;
+	int open_circle_boxes = 0;
+	for (int i = 1; i < BOXNUM; i++)
+	{
+		if (chains[i].chain_type == CHAIN)
+		{
+			chain_num++;
+			chain_boxes+=chains[i].total_box_num;
+		}
+		else if (chains[i].chain_type == OPEN_CHAIN)
+		{
+			open_chain_num++;
+			open_chain_boxes += chains[i].total_box_num;
+		}
+		else if (chains[i].chain_type == CIRCLE)
+		{
+			circle_num++;
+			circle_boxes += chains[i].total_box_num;
+		}
+		else if (chains[i].chain_type == OPEN_CIRCLE)
+		{
+			open_circle_num++;
+			open_circle_boxes += chains[i].total_box_num;
+		}
+
 	
-	
+
 	return 0;
 }
 
@@ -319,7 +353,7 @@ void ChessBoardSolver::RegisterCircle(Loc start_loc, Loc first_loc)
 		if (boxes[dest_loc.x][dest_loc.y].type != CHAIN_BOX)
 		{
 			//if we found a box which is not CHAIN_BOX, cancal register.
-			InheritChain(EMPTY, chain_num);//make chain(0) inherit this chain.
+			DestoryChain(chain_num);//destory current chain.
 			break;
 		}
 		else if (EqualLoc(dest_loc,start_loc))//if dest_loc equal to start_loc that means it is a CIRCLE
@@ -347,7 +381,7 @@ void ChessBoardSolver::RegisterCircle(Loc start_loc, Loc first_loc)
 }
 
 
-int ChessBoardSolver::GetEmptyChainNum()
+int ChessBoardSolver::GetEmptyChainNum()const
 {
 	//return an number of chain which is empty but 0.
 	//chain no.0 is always empty.
@@ -369,11 +403,15 @@ void ChessBoardSolver::InheritChain(int inheritor, int ancester)
 	chains[ancester].total_box_num = 0;
 	chains[ancester].chain_type = UNDEFINED;
 }
-BoxType ChessBoardSolver::GetBoxType(sint bx, sint by)
+BoxType ChessBoardSolver::GetBoxType(sint bx, sint by) const
 {
 	if (bx >= 0 && bx < BOXLEN&&by >= 0 && by < BOXLEN)
 		return boxes[bx][by].type;
 	return FREE_BOX;
+}
+void ChessBoardSolver::DestoryChain(int chain_num)
+{
+	InheritChain(EMPTY, chain_num);
 }
 
 //test function
