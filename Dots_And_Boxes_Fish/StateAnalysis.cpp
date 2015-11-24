@@ -33,7 +33,7 @@ sint ChessBoardSolver::CalculateWinner()
 		if (chains[i].chain_type == CHAIN)
 		{
 			chain_num++;
-			chain_boxes+=chains[i].total_box_num;
+			chain_boxes += chains[i].total_box_num;
 		}
 		else if (chains[i].chain_type == OPEN_CHAIN)
 		{
@@ -51,8 +51,8 @@ sint ChessBoardSolver::CalculateWinner()
 			open_circle_boxes += chains[i].total_box_num;
 		}
 
-	
 
+	}
 	return 0;
 }
 
