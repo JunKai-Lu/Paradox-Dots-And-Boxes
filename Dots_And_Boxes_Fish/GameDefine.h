@@ -156,8 +156,6 @@ public:
 		if (board[x][y - 1] == EDGE){ edge++; }
 		return edge;
 	}
-
-protected:
 	inline int GetPlayerBoxes(sint player) const
 	{
 		int b = 0;
@@ -168,6 +166,12 @@ protected:
 					b++;
 		return b;
 	}
+	inline void SetValue(sint x, sint y, sint value)
+	{
+		board[x][y] = value;
+	}
+protected:
+	
 	inline bool GetBoxCompleted(sint x, sint y) const
 	{
 		if (board[x + 1][y] == EDGE){ return false; }

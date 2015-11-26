@@ -18,43 +18,68 @@ ChessBoardSolver::ChessBoardSolver(ChessBoard &cb, sint next_player)
 sint ChessBoardSolver::CalculateWinner()
 {
 	DefineChainInfo();
-
 	//count the number of each chain.
-	int chain_num = 0;
-	int open_chain_num = 0;
-	int circle_num = 0;
-	int open_circle_num = 0;
-	int chain_boxes = 0;
-	int open_chain_boxes = 0;
-	int circle_boxes = 0;
-	int open_circle_boxes = 0;
-	for (int i = 1; i < BOXNUM; i++)
+	int sacrifice = GetSacrificedBoxesNum();
+
+	if (RationalState(sacrifice))
 	{
-		if (chains[i].chain_type == CHAIN)
+		//the first player can get boxes which number is equal to sacrifice.
+		int first = sacrifice + chessboard->GetPlayerBoxes(first_player);
+		int second = BOXNUM - first;
+		if (first > second)
+			return first_player;
+		else
+			return -first_player;
+	}
+	else
+	{
+		ChessBoard test_board = *chessboard;//copy to a temporary variable
+		ChessBoard *target = chessboard;
+		chessboard = &test_board;
+		sint player = first_player;
+
+		for (;;)
 		{
-			chain_num++;
-			chain_boxes += chains[i].total_box_num;
-		}
-		else if (chains[i].chain_type == OPEN_CHAIN)
-		{
-			open_chain_num++;
-			open_chain_boxes += chains[i].total_box_num;
-		}
-		else if (chains[i].chain_type == CIRCLE)
-		{
-			circle_num++;
-			circle_boxes += chains[i].total_box_num;
-		}
-		else if (chains[i].chain_type == OPEN_CIRCLE)
-		{
-			open_circle_num++;
-			open_circle_boxes += chains[i].total_box_num;
+			CaptureShortestChain(player);
+			player = -player;//change next player
+			if (chessboard->Winner() != 0)
+				break;
+			DefineChainInfo();
+			sacrifice = GetSacrificedBoxesNum();
+			if (RationalState(sacrifice))
+				break;
 		}
 
-
+		if (chessboard->Winner() != 0)
+		{
+			chessboard = target;
+			return chessboard->Winner();
+		}
+		else
+		{
+			int fir_player_score = 0;
+			int sec_player_score = 0;
+			if (player == first_player)
+			{
+				fir_player_score = sacrifice + chessboard->GetPlayerBoxes(player);
+				sec_player_score = BOXNUM - fir_player_score;
+			}
+			else
+			{
+				sec_player_score = sacrifice + chessboard->GetPlayerBoxes(player);
+				fir_player_score = BOXNUM - sec_player_score;
+			}
+			
+			chessboard = target;
+			if (fir_player_score > sec_player_score)
+				return first_player;
+			else
+				return -first_player;
+		}
 	}
 	return 0;
 }
+
 
 //private function
 
@@ -379,7 +404,84 @@ void ChessBoardSolver::RegisterCircle(Loc start_loc, Loc first_loc)
 		}
 	}
 }
+int ChessBoardSolver::GetSacrificedBoxesNum()
+{
+	chain_num = 0;
+	open_chain_num = 0;
+	circle_num = 0;
+	open_circle_num = 0;
 
+	int chain_boxes = 0;
+	int open_chain_boxes = 0;
+	int circle_boxes = 0;
+	int open_circle_boxes = 0;
+
+	int sacrifice = 0;
+	for (int i = 1; i < BOXNUM; i++)
+	{
+		if (chains[i].chain_type == CHAIN)
+		{
+			chain_num++;
+			chain_boxes += chains[i].total_box_num;
+		}
+		else if (chains[i].chain_type == OPEN_CHAIN)
+		{
+			open_chain_num++;
+			open_chain_boxes += chains[i].total_box_num;
+		}
+		else if (chains[i].chain_type == CIRCLE)
+		{
+			circle_num++;
+			circle_boxes += chains[i].total_box_num;
+		}
+		else if (chains[i].chain_type == OPEN_CIRCLE)
+		{
+			open_circle_num++;
+			open_circle_boxes += chains[i].total_box_num;
+		}
+		//
+		
+		if (open_chain_num == 0 || open_circle_num == 0)
+		{
+			if (chain_num == 0)
+			{
+				sacrifice = (open_chain_num * 2) + (circle_num * 4) + ((open_circle_num - 1) * 4);
+			}
+			else
+			{
+				sacrifice = (open_chain_num * 2) + (circle_num * 4) + (open_circle_num * 4) + ((chain_num - 1) * 2);
+			}
+		}
+		else
+		{
+			if (chain_num == 0 && circle_num != 0)
+			{
+				sacrifice = (circle_num - 1) * 4;
+			}
+			else if (chain_num != 0 && circle_num == 0)
+			{
+				sacrifice = (chain_num - 1) * 2;
+			}
+			else
+			{
+				sacrifice = (4 * circle_num) + (2 * (chain_num - 1));
+			}
+		}
+
+	}
+	return sacrifice;
+}
+bool ChessBoardSolver::RationalState(int sacrifice)
+{
+	int total = 0;
+	for (int j = 1; j < LEN; j+=2)
+		for (int i = 1; i < LEN; i+=2)
+			if (chessboard->Equal(i, j, BOX))
+				total++;
+	if (sacrifice * 2 <= total)
+		return true;
+	return false;
+}
 
 int ChessBoardSolver::GetEmptyChainNum()const
 {
@@ -412,6 +514,46 @@ BoxType ChessBoardSolver::GetBoxType(sint bx, sint by) const
 void ChessBoardSolver::DestoryChain(int chain_num)
 {
 	InheritChain(EMPTY, chain_num);
+}
+void ChessBoardSolver::CaptureShortestChain(sint player)
+{
+	int s_num = EMPTY;
+	int s_boxes = BOXNUM;
+	for (int i = 1; i < BOXNUM; i++)
+	{
+		if (chains[i].chain_type == CHAIN || chains[i].chain_type == CIRCLE || chains[i].chain_type == OPEN_CHAIN)
+		{
+			if (chains[i].total_box_num <= s_boxes)
+			{
+				s_num = i;
+				s_boxes = chains[i].total_box_num;
+			}
+		}
+	}
+
+	//capture the shortest chain
+	for (int y = 0; y < BOXLEN; y++)
+	{
+		for (int x = 0; x < BOXLEN; x++)
+		{
+			if (boxes[x][y].belonging_chain_num == s_num)
+			{
+				int bx = x * 2 + 1;
+				int by = y * 2 + 1;
+				if (chessboard->Equal(bx + 1, by, EDGE))
+					chessboard->SetValue(bx + 1, by, player);
+				if (chessboard->Equal(bx - 1, by, EDGE))
+					chessboard->SetValue(bx - 1, by, player);
+				if (chessboard->Equal(bx, by + 1, EDGE))
+					chessboard->SetValue(bx, by + 1, player);
+				if (chessboard->Equal(bx, by - 1, EDGE))
+					chessboard->SetValue(bx, by - 1, player);
+				if (chessboard->Equal(bx, by, BOX))
+					chessboard->SetValue(bx, by - 1, player*2);
+			}
+		}
+	}
+	DestoryChain(s_num);
 }
 
 //test function

@@ -53,6 +53,10 @@ private:
 	BoxInfo boxes[BOXLEN][BOXLEN];	//boxes infomation
 	ChainInfo chains[BOXNUM];		//chains infomation
 	sint first_player;				//the player who is preparing to make move.
+	int chain_num = 0;
+	int circle_num = 0;
+	int open_chain_num = 0;
+	int open_circle_num = 0;
 
 	//function
 	void DefineBoxesInfo();									//define the infomation of all boxes 
@@ -62,11 +66,14 @@ private:
 	void SearchingCircle(Loc chain_box_loc);				//define circle form a undefined chain box. 
 	void RegisterChain(Loc free_box_loc, Loc first_loc);	//register a chain from a free box.
 	void RegisterCircle(Loc start_loc, Loc first_loc);		//register a circle from a chain box.
+	int GetSacrificedBoxesNum();
+	bool RationalState(int sacrifice);
+
 	int GetEmptyChainNum() const;							//return a number of an empty chain
 	BoxType GetBoxType(sint bx, sint by) const;				//return the type of box (bx,by). all boxes which is out of chessboard would be judged as FREE_BOX.		
 	void InheritChain(int inheritor, int ancester);			//one chain get all the box of another chain
 	void DestoryChain(int chain_num);						//destory giving chain space.
-	
+	void CaptureShortestChain(sint player);
 public:
 	//test
 	void ShowBoardInfo() const;
